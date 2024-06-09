@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,41 +23,19 @@ public class AnimationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AnimationRecord> getAnimationsById(@PathVariable Long id){
-        try {
-            AnimationRecord animation = animationService.getAnimations(id);
-            return ResponseEntity.ok(animation);
-        } catch (NoSuchElementException e){
-            log.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        } catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        AnimationRecord animation = animationService.getAnimations(id);
+        return ResponseEntity.ok(animation);
     }
 
     @PostMapping
     public ResponseEntity<AnimationRecord> addAnimations(@RequestBody AnimationRecord animationRecord){
-        try {
-            AnimationRecord addedAnimation = animationService.addAnimations(animationRecord);
-
-            return ResponseEntity.ok(addedAnimation);
-        } catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        AnimationRecord addedAnimation = animationService.addAnimations(animationRecord);
+        return ResponseEntity.ok(addedAnimation);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AnimationRecord> putAnimations(@PathVariable Long id, @RequestBody AnimationRecord animationRecord){
-        try {
-            AnimationRecord animations = animationService.putAnimations(id, animationRecord);
-            return ResponseEntity.ok(animations);
-        } catch (NoSuchElementException e){
-            log.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        } catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        AnimationRecord animations = animationService.putAnimations(id, animationRecord);
+        return ResponseEntity.ok(animations);
     }
 }

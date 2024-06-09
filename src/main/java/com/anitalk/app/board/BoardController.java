@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/animations/{animationId}/boards")
@@ -19,48 +18,25 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<List<BoardListRecord>> getBoards(@PathVariable Long animationId){
-        try {
-            List<BoardListRecord> boardRecords = boardService.getBoards(animationId);
-            return ResponseEntity.ok(boardRecords);
-        } catch (NoSuchElementException e){
-            log.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
+        List<BoardListRecord> boardRecords = boardService.getBoards(animationId);
+        return ResponseEntity.ok(boardRecords);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BoardRecord> getBoardById(@PathVariable Long animationId, @PathVariable Long id){
-        try{
-            BoardRecord boardRecord = boardService.getBoardById(animationId, id);
-            return ResponseEntity.ok(boardRecord);
-        } catch (NoSuchElementException e){
-            log.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
+        BoardRecord boardRecord = boardService.getBoardById(animationId, id);
+        return ResponseEntity.ok(boardRecord);
     }
 
     @PostMapping
     public ResponseEntity<BoardRecord> addBoard(@PathVariable Long animationId, @RequestBody BoardRecord board){
-        try{
-            BoardRecord boardRecord = boardService.addBoard(animationId, board);
-            return ResponseEntity.ok(boardRecord);
-        } catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        BoardRecord boardRecord = boardService.addBoard(animationId, board);
+        return ResponseEntity.ok(boardRecord);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<BoardRecord> putBoard(@PathVariable Long animationId, @PathVariable Long id, @RequestBody BoardRecord record){
-        try{
-            BoardRecord putBoard = boardService.putBoard(id, animationId, record);
-            return ResponseEntity.ok(putBoard);
-        } catch (NoSuchElementException e){
-            log.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        } catch (Exception e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        BoardRecord putBoard = boardService.putBoard(id, animationId, record);
+        return ResponseEntity.ok(putBoard);
     }
 }
