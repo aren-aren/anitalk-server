@@ -1,6 +1,7 @@
 package com.anitalk.app.animation;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,14 @@ public class AnimationEntity {
     @Column
     @Enumerated(EnumType.ORDINAL)
     private Day day;
+
+    @Builder
+    public AnimationEntity(String name, String plot, String startDate, String endDate, Integer episodes, Day day) {
+        this.name = name;
+        this.plot = plot;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.episodes = episodes;
+        this.day = day;
+    }
 }
