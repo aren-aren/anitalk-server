@@ -3,8 +3,6 @@ package com.anitalk.app.animation;
 import com.anitalk.app.animation.dto.AnimationRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +16,7 @@ import java.util.NoSuchElementException;
 public class AnimationController {
     private final AnimationService animationService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<AnimationRecord>> getAnimations(){
         List<AnimationRecord> animations = animationService.getAnimations();
         return ResponseEntity.ok(animations);
@@ -38,7 +36,7 @@ public class AnimationController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<AnimationRecord> addAnimations(@RequestBody AnimationRecord animationRecord){
         try {
             AnimationRecord addedAnimation = animationService.addAnimations(animationRecord);

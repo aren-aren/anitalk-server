@@ -13,7 +13,7 @@ public record AnimationRecord(
         String day
 ) {
     public AnimationRecord{
-        Day.valueOf(day);
+        if(day != null) Day.valueOf(day);
     }
 
     public static AnimationRecord of(AnimationEntity entity){
