@@ -26,9 +26,10 @@ public class AnimationService {
     }
 
     public AnimationRecord putAnimations(Long id, AnimationRecord animationRecord) {
-        repository.findById(id).orElseThrow();
-        AnimationEntity entity = animationRecord.toEntity();
+        AnimationEntity entity = repository.findById(id).orElseThrow();
+        animationRecord.putEntity(entity);
         entity.setId(id);
+
         AnimationEntity putAnimation = repository.save(entity);
         return AnimationRecord.of(putAnimation);
     }

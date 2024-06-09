@@ -38,4 +38,26 @@ public record AnimationRecord(
                 .day(Day.valueOf(day()))
                 .build();
     }
+
+    public void putEntity(AnimationEntity entity) {
+        if(name() != null){
+            entity.setName(name());
+        }
+        if(plot() != null){
+            entity.setPlot(plot());
+        }
+        if(startDate() != null){
+            entity.setStartDate(startDate());
+        }
+        if(endDate() != null){
+            entity.setEndDate(endDate());
+        }
+        if(episodes() != null){
+            entity.setEpisodes(episodes());
+        }
+        if(day() != null){
+            entity.setDay(Day.valueOf(day()));
+        }
+
+    }
 }
