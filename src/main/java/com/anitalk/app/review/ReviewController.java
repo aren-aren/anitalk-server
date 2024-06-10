@@ -1,7 +1,5 @@
 package com.anitalk.app.review;
 
-import com.anitalk.app.board.dto.BoardListRecord;
-import com.anitalk.app.board.dto.BoardRecord;
 import com.anitalk.app.review.dto.ReviewRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

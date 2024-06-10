@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ControllerExceptionHandler {
     private void printExceptionLog(Exception e){
+        e.printStackTrace();
         log.error("Exception : {} , message : {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
     }
 
