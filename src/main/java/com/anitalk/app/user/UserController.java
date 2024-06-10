@@ -3,7 +3,7 @@ package com.anitalk.app.user;
 import com.anitalk.app.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.user.dto.JwtRecord;
 import com.anitalk.app.user.dto.UserRecord;
-import com.anitalk.app.utils.JwtGenerator;
+import com.anitalk.app.security.JwtGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

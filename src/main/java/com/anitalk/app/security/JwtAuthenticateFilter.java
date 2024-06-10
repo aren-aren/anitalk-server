@@ -1,6 +1,5 @@
 package com.anitalk.app.security;
 
-import com.anitalk.app.utils.JwtGenerator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +27,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String token = getJWTFromRequest(request);
+
         if (StringUtils.hasText(token) && jwtGenerator.validateToken(token)) {
             String username = jwtGenerator.getUsernameFromToken(token);
 
@@ -36,8 +36,8 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(userDetails, null, null);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
         }
+
         filterChain.doFilter(request, response);
     }
 

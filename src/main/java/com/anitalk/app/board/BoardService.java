@@ -1,5 +1,6 @@
 package com.anitalk.app.board;
 
+import com.anitalk.app.board.dto.BoardAddRecord;
 import com.anitalk.app.board.dto.BoardListRecord;
 import com.anitalk.app.board.dto.BoardRecord;
 import com.anitalk.app.utils.DateManager;
@@ -24,12 +25,14 @@ public class BoardService {
         return BoardRecord.of(entity);
     }
 
-    public BoardRecord addBoard(Long animationId, BoardRecord board) {
+    public BoardRecord addBoard(Long animationId, BoardAddRecord board) {
         BoardEntity entity = board.toEntity();
         entity.setAnimationId(animationId);
         entity.setHit(0L);
         entity.setIsDeleted(false);
         entity.setWriteDate(DateManager.nowDateTime());
+
+        /* ip 처리 필요 */
 
         entity = boardRepository.save(entity);
         return BoardRecord.of(entity);
@@ -42,4 +45,5 @@ public class BoardService {
         entity = boardRepository.save(entity);
         return BoardRecord.of(entity);
     }
+
 }

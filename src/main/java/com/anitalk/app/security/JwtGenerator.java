@@ -1,4 +1,4 @@
-package com.anitalk.app.utils;
+package com.anitalk.app.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +15,7 @@ import java.util.Date;
 @Slf4j
 public class JwtGenerator {
     private final Key key;
-    private final Long expireTime = 1000L * 60 * 5;
+    private final Long expireTime = 1000L * 60 * 60 * 24;
 
     public JwtGenerator(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

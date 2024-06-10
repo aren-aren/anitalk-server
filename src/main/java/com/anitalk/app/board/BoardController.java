@@ -1,10 +1,14 @@
 package com.anitalk.app.board;
 
+import com.anitalk.app.board.dto.BoardAddRecord;
 import com.anitalk.app.board.dto.BoardListRecord;
 import com.anitalk.app.board.dto.BoardRecord;
+import com.anitalk.app.user.dto.AuthenticateUserRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +33,22 @@ public class BoardController {
     }
 
     @PostMapping
-    public ResponseEntity<BoardRecord> addBoard(@PathVariable Long animationId, @RequestBody BoardRecord board){
-        BoardRecord boardRecord = boardService.addBoard(animationId, board);
+    public ResponseEntity<BoardRecord> addBoard(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            @RequestBody BoardAddRecord boardAddRecord
+    ){
+        if(user != null) {
+            boardAddRecord = new BoardAddRecord(
+                    boardAddRecord.title(),
+                    boardAddRecord.content(),
+                    boardAddRecord.nickname(),
+                    boardAddRecord.password(),
+                    user.id(),
+                    boardAddRecord.category()
+            );
+        }
+        BoardRecord boardRecord = boardService.addBoard(animationId, boardAddRecord);
         return ResponseEntity.ok(boardRecord);
     }
 
