@@ -38,7 +38,7 @@ public class BoardService {
         return BoardRecord.of(entity);
     }
 
-    public BoardRecord putBoard(Long id, Long animationId, BoardRecord record) {
+    public BoardRecord putBoard(Long id, Long animationId, BoardAddRecord record) {
         BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
         record.putEntity(entity);
 

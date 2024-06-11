@@ -1,6 +1,7 @@
 package com.anitalk.app.board.dto;
 
 import com.anitalk.app.board.BoardEntity;
+import com.anitalk.app.utils.DateManager;
 
 public record BoardAddRecord(
         String title,
@@ -20,5 +21,15 @@ public record BoardAddRecord(
                 .userId(userId())
                 .category(category())
                 .build();
+    }
+
+    public void putEntity(BoardEntity entity) {
+        if(title() != null){
+            entity.setTitle(title());
+        }
+        if(content() != null){
+            entity.setContent(content());
+        }
+        entity.setModifyDate(DateManager.nowDateTime());
     }
 }

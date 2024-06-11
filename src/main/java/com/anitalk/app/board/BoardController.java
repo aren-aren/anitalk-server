@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,8 +52,23 @@ public class BoardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardRecord> putBoard(@PathVariable Long animationId, @PathVariable Long id, @RequestBody BoardRecord record){
-        BoardRecord putBoard = boardService.putBoard(id, animationId, record);
+    public ResponseEntity<BoardRecord> putBoard(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            @PathVariable Long id,
+            @RequestBody BoardRecord record
+    ){
+        if(user == null) return ResponseEntity.badRequest().build();
+
+        BoardAddRecord boardAddRecord = new BoardAddRecord(
+                record.title(),
+                record.content(),
+                null,
+                null,
+                user.id(),
+                null
+        );
+        BoardRecord putBoard = boardService.putBoard(id, animationId, boardAddRecord);
         return ResponseEntity.ok(putBoard);
     }
 }
