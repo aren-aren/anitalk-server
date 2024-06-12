@@ -20,9 +20,8 @@ public class ReviewService {
         return ReviewRecord.of(reviewEntity);
     }
 
-    public ReviewRecord addReview(Long animationId, ReviewRecord review) {
+    public ReviewRecord addReview(ReviewRecord review) {
         ReviewEntity entity = review.toEntity();
-        entity.setAnimationId(animationId);
         entity.getRate().setReview(entity);
 
         repository.save(entity);

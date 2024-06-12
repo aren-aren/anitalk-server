@@ -32,10 +32,10 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(token) && jwtGenerator.validateToken(token)) {
             Map<String, Object> claims = jwtGenerator.getClaimsFromToken(token);
 
-            UserDetails userDetails = getUserDetail(claims.get("userId").toString(), claims.get("email").toString());
+            AuthenticateUserRecord userRecord = getUserDetail(claims.get("userId").toString(), claims.get("email").toString());
 
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, null);
+                    new UsernamePasswordAuthenticationToken(userRecord, null, null);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
@@ -51,9 +51,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private LoginUser getUserDetail(String userId, String email){
-        AuthenticateUserRecord authenticateUserRecord =
-                new AuthenticateUserRecord(Long.parseLong(userId), email, null, null);
-        return new LoginUser(authenticateUserRecord);
+    private AuthenticateUserRecord getUserDetail(String userId, String email){
+        return new AuthenticateUserRecord(Long.parseLong(userId), email, null, null);
     }
 }
