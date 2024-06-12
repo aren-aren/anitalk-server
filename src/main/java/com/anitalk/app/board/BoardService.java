@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final LikeRepository likeRepository;
 
     public List<BoardListRecord> getBoards(Long animationId) {
         return boardRepository.findAllByAnimationId(animationId).stream()
@@ -46,4 +47,14 @@ public class BoardService {
         return BoardRecord.of(entity);
     }
 
+    public void likeBoard(Long userId, Long boardId) {
+        LikeEntity like = new LikeEntity(userId, boardId);
+        likeRepository.save(like);
+    }
+
+    public void unLikeBoard(Long userId, Long boardId) {
+        LikeEntityId likeId = new LikeEntityId(userId, boardId);
+        LikeEntity like = likeRepository.findById(likeId).orElseThrow();
+        likeRepository.delete(like);
+    }
 }

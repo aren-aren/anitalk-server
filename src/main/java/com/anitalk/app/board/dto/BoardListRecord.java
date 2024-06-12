@@ -1,6 +1,7 @@
 package com.anitalk.app.board.dto;
 
 import com.anitalk.app.board.BoardEntity;
+import org.hibernate.Hibernate;
 
 public record BoardListRecord(
         Long id,
@@ -12,6 +13,7 @@ public record BoardListRecord(
         String nickname,
         Long userId,
         String category
+//        Integer likes
 ) {
     public static BoardListRecord of(BoardEntity entity){
         return new BoardListRecord(
@@ -24,6 +26,7 @@ public record BoardListRecord(
                 entity.getIp(),
                 entity.getUserId(),
                 entity.getContent()
+//                Hibernate.size(entity.getLike())
         );
     }
 }

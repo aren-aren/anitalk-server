@@ -71,4 +71,30 @@ public class BoardController {
         BoardRecord putBoard = boardService.putBoard(id, animationId, boardAddRecord);
         return ResponseEntity.ok(putBoard);
     }
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<String> likeBoard(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            @PathVariable Long id ){
+        if(user == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        boardService.likeBoard(user.id(), id);
+        return ResponseEntity.ok("success");
+    }
+
+    @DeleteMapping("/{id}/unlike")
+    public ResponseEntity<String> unlikeBoard(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            @PathVariable Long id ){
+        if(user == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        boardService.unLikeBoard(user.id(), id);
+        return ResponseEntity.ok("success");
+    }
 }

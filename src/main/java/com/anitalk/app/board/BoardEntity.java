@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -51,6 +54,10 @@ public class BoardEntity {
     @Column
     @Enumerated(EnumType.ORDINAL)
     private BoardCategory category;
+
+//    @OneToMany
+//    @JoinColumn(name = "board_id")
+//    List<LikeEntity> like;
 
     @Builder
     public BoardEntity(Long animationId,
