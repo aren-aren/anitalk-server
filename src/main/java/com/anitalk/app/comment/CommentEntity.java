@@ -1,20 +1,21 @@
 package com.anitalk.app.comment;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Entity
 @Table(name = "comment")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "board_id", nullable = false)
@@ -46,5 +47,4 @@ public class CommentEntity {
 
     @Column(name = "step")
     private Long step;
-
 }
