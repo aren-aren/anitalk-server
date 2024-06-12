@@ -41,8 +41,12 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewRecord> putReview(@PathVariable Long id, @RequestBody ReviewRecord review){
-        ReviewRecord putBoard = reviewService.putReview(id, review);
+    public ResponseEntity<ReviewRecord> putReview(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long id,
+            @RequestBody ReviewRecord review){
+        review = new ReviewRecord(id, null, user.id(), review.content(), review.rate());
+        ReviewRecord putBoard = reviewService.putReview(review);
         return ResponseEntity.ok(putBoard);
     }
 }

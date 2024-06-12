@@ -29,8 +29,8 @@ public class ReviewService {
         return ReviewRecord.of(entity);
     }
 
-    public ReviewRecord putReview(Long id, ReviewRecord review) {
-        ReviewEntity entity = repository.findById(id).orElseThrow();
+    public ReviewRecord putReview(ReviewRecord review) {
+        ReviewEntity entity = repository.findById(review.id()).orElseThrow();
         review.putEntity(entity);
         entity = repository.save(entity);
         return ReviewRecord.of(entity);
