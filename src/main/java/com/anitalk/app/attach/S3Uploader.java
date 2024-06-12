@@ -2,7 +2,6 @@ package com.anitalk.app.attach;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ public class S3Uploader implements AttachUploader {
     @Override
     public String uploadAttach(String filename, MultipartFile file) throws Exception {
         try{
-            String url = awsUrl + "/" + bucket + "/" + filename;
+            String url = awsUrl + filename;
 
             ObjectMetadata data = new ObjectMetadata();
             data.setContentType(file.getContentType());
