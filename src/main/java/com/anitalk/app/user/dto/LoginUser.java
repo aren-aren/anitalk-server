@@ -25,4 +25,8 @@ public class LoginUser implements UserDetails {
     public String getUsername() {
         return userRecord.email();
     }
+
+    public AuthenticateUserRecord getUserRecord() {
+        return userRecord;
+    }
 }

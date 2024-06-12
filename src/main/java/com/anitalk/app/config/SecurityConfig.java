@@ -49,7 +49,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticateFilter jwtAuthenticateFilter(JwtGenerator generator, UserLoginService service){
-        return new JwtAuthenticateFilter(generator,service);
+    public JwtAuthenticateFilter jwtAuthenticateFilter(JwtGenerator generator){
+        return new JwtAuthenticateFilter(generator);
     }
 }

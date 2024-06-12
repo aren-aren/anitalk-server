@@ -1,6 +1,7 @@
 package com.anitalk.app.user.dto;
 
-public record JwtRecord(
+public record JwtToken(
+        String tokenType,
         String token
 ) {
 }

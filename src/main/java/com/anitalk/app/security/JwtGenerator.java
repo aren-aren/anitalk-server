@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -22,11 +24,13 @@ public class JwtGenerator {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username){
+    public String generateToken(Long userId, String username){
         Date current = new Date();
         Date expire = new Date(current.getTime() + expireTime);
 
-        Claims claims = Jwts.claims().setSubject(username);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("email", username);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -36,13 +40,12 @@ public class JwtGenerator {
                 .compact();
     }
 
-    public String getUsernameFromToken(String token){
+    public Map<String, Object> getClaimsFromToken(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
     public boolean validateToken(String token){

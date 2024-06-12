@@ -1,8 +1,6 @@
 package com.anitalk.app.user;
 
-import com.anitalk.app.user.dto.AuthenticateUserRecord;
-import com.anitalk.app.user.dto.JwtRecord;
-import com.anitalk.app.user.dto.UserRecord;
+import com.anitalk.app.user.dto.*;
 import com.anitalk.app.security.JwtGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,11 +30,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtRecord> login(@RequestBody AuthenticateUserRecord authenticateUserRecord){
+    public ResponseEntity<UserTokenRecord> login(@RequestBody AuthenticateUserRecord authenticateUserRecord){
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticateUserRecord.email(), authenticateUserRecord.password()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = generator.generateToken(authentication.getName());
-        return ResponseEntity.ok(new JwtRecord(token));
+        AuthenticateUserRecord loginUser = ((LoginUser) authentication.getPrincipal()).getUserRecord();
+        String token = generator.generateToken(loginUser.id(), loginUser.email());
+
+        return ResponseEntity.ok(new UserTokenRecord(
+                new UserRecord(loginUser.id(), loginUser.email(), loginUser.nickname()) ,
+                new JwtToken("bearer", token)
+        ));
     }
 }
