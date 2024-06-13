@@ -17,4 +17,14 @@ public class AttachController {
         AttachRecord attachRecord = attachManager.uploadAttach(category, attach);
         return ResponseEntity.ok(attachRecord);
     }
+
+    @PostMapping("/{category}")
+    public ResponseEntity<AttachRecord> addAttachWithParent(
+            @PathVariable String category,
+            @RequestParam Long parentId,
+            @RequestBody MultipartFile attach
+    ) throws Exception {
+        AttachRecord attachRecord = attachManager.uploadAttach(category, parentId, attach);
+        return ResponseEntity.ok(attachRecord);
+    }
 }

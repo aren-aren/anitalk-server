@@ -2,7 +2,7 @@ package com.anitalk.app.animation.dto;
 
 import com.anitalk.app.animation.AnimationEntity;
 
-import java.util.List;
+import java.util.Set;
 
 public record AnimationRecord(
         Long id,
@@ -18,7 +18,7 @@ public record AnimationRecord(
         Integer episode,
         String startDate,
         String currentDate,
-        List<String> attach
+        Set<String> attach
 ) {
     public static AnimationRecord of(AnimationEntity entity){
         return new AnimationRecord(

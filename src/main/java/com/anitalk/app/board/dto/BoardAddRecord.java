@@ -3,7 +3,7 @@ package com.anitalk.app.board.dto;
 import com.anitalk.app.board.BoardEntity;
 import com.anitalk.app.utils.DateManager;
 
-import java.util.List;
+import java.util.Set;
 
 public record BoardAddRecord(
         String title,
@@ -12,7 +12,7 @@ public record BoardAddRecord(
         String password,
         Long userId,
         String category,
-        List<String> attaches
+        Set<String> attaches
 ) {
 
     public BoardEntity toEntity(){

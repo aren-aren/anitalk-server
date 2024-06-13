@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -17,6 +14,10 @@ public class AttachManager {
     private final AttachRepository attachRepository;
 
     public AttachRecord uploadAttach(String category, MultipartFile file) throws Exception {
+        return uploadAttach(category, null, file);
+    }
+
+    public AttachRecord uploadAttach(String category, Long parentId, MultipartFile file) throws Exception {
         if(file == null || file.isEmpty()){
             throw new Exception("파일이 비어있습니다.");
         }
@@ -27,6 +28,7 @@ public class AttachManager {
         AttachEntity entity = AttachEntity.builder()
                 .category(category)
                 .name(filename)
+                .parentId(parentId)
                 .originName(originName)
                 .build();
 
@@ -35,6 +37,7 @@ public class AttachManager {
                 entity.getId(),
                 entity.getCategory(),
                 entity.getName(),
+                entity.getParentId(),
                 entity.getOriginName(),
                 url
         );
@@ -45,7 +48,7 @@ public class AttachManager {
         attachUploader.deleteAttach(entity.getName());
     }
 
-    public void connectAttaches(String category, Long parentId, List<String> attaches) {
+    public void connectAttaches(String category, Long parentId, Set<String> attaches) {
         List<AttachEntity> entities = attachRepository.findAllByNameIn(attaches);
 
         if(entities.size() != attaches.size()) throw new NoSuchElementException("첨부파일 등록 실패");
@@ -57,10 +60,20 @@ public class AttachManager {
         attachRepository.saveAll(entities);
     }
 
-    public void PutConnectionAttaches(String category, Long parentId, List<String> attaches) {
-        List<AttachEntity> entities = attachRepository.findAllByCategoryAndParentId(category, parentId);
+    public void PutConnectionAttaches(String category, Long parentId, Set<String> attaches) {
+        List<AttachEntity> connectedEntities = attachRepository.findAllByCategoryAndParentIdOrNameIn(category, parentId, attaches);
 
-        List<AttachEntity> deleteEntities = new ArrayList<>();
+        for (AttachEntity entity : connectedEntities) {
+            if(!attaches.contains(entity.getName())){
+                entity.setCategory(null);
+                entity.setParentId(null);
+                continue;
+            }
 
+            entity.setCategory(category);
+            entity.setParentId(parentId);
+        }
+
+        attachRepository.saveAll(connectedEntities);
     }
 }
