@@ -17,8 +17,8 @@ public class AnimationController {
     private final AnimationService animationService;
 
     @GetMapping
-    public ResponseEntity<List<AnimationRecord>> getAnimations(@RequestParam Pagination page){
-        List<AnimationRecord> animations = animationService.getAnimations(page);
+    public ResponseEntity<List<AnimationRecord>> getAnimations(Pagination pagination){
+        List<AnimationRecord> animations = animationService.getAnimations(pagination);
         return ResponseEntity.ok(animations);
     }
 
