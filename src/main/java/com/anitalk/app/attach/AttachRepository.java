@@ -10,4 +10,5 @@ import java.util.List;
 public interface AttachRepository extends JpaRepository<AttachEntity, Long> {
     List<AttachEntity> findAllByNameIn(Collection<String> name);
     List<AttachEntity> findAllByCategoryAndParentIdOrNameIn(String category, Long parentId, Collection<String> name);
+    AttachEntity findByParentId(Long parentId);
 }

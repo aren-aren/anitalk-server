@@ -21,6 +21,14 @@ public class AttachManager {
         if(file == null || file.isEmpty()){
             throw new Exception("파일이 비어있습니다.");
         }
+
+        if(category.equals("animations")){
+            AttachEntity existEntity = attachRepository.findByParentId(parentId);
+            if(existEntity != null){
+                throw new Exception("이미 존재하는 파일");
+            }
+        }
+
         String filename = UUID.randomUUID().toString();
         String originName = file.getOriginalFilename();
         String url = attachUploader.uploadAttach(filename, file);
