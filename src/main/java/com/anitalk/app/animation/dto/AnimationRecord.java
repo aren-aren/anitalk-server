@@ -3,6 +3,8 @@ package com.anitalk.app.animation.dto;
 import com.anitalk.app.animation.AnimationEntity;
 import com.anitalk.app.animation.Day;
 
+import java.util.List;
+
 public record AnimationRecord(
         Long id,
         String name,
@@ -10,7 +12,8 @@ public record AnimationRecord(
         String startDate,
         String endDate,
         Integer episodes,
-        String day
+        String day,
+        List<String> attach
 ) {
     public AnimationRecord{
         if(day != null) Day.valueOf(day);
@@ -24,7 +27,8 @@ public record AnimationRecord(
                 entity.getStartDate(),
                 entity.getEndDate(),
                 entity.getEpisodes(),
-                entity.getDay().toString()
+                entity.getDay().toString(),
+                null
         );
     }
 

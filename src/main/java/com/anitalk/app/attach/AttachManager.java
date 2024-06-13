@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -54,5 +55,12 @@ public class AttachManager {
             entity.setParentId(parentId);
         }
         attachRepository.saveAll(entities);
+    }
+
+    public void PutConnectionAttaches(String category, Long parentId, List<String> attaches) {
+        List<AttachEntity> entities = attachRepository.findAllByCategoryAndParentId(category, parentId);
+
+        List<AttachEntity> deleteEntities = new ArrayList<>();
+
     }
 }
