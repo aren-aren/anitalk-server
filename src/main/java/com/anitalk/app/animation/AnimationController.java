@@ -1,6 +1,7 @@
 package com.anitalk.app.animation;
 
 import com.anitalk.app.animation.dto.AnimationRecord;
+import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class AnimationController {
     private final AnimationService animationService;
 
     @GetMapping
-    public ResponseEntity<List<AnimationRecord>> getAnimations(){
-        List<AnimationRecord> animations = animationService.getAnimations();
+    public ResponseEntity<List<AnimationRecord>> getAnimations(@RequestParam Pagination page){
+        List<AnimationRecord> animations = animationService.getAnimations(page);
         return ResponseEntity.ok(animations);
     }
 

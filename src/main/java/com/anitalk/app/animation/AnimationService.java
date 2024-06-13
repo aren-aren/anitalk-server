@@ -2,8 +2,12 @@ package com.anitalk.app.animation;
 
 import com.anitalk.app.animation.dto.AnimationRecord;
 import com.anitalk.app.attach.AttachManager;
+import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +21,9 @@ public class AnimationService {
     @Value("${aws.url}")
     private String url;
 
-    public List<AnimationRecord> getAnimations(){
-        return repository.findAll().stream().map(animation -> AnimationRecord.of(animation, url)).toList();
+    public List<AnimationRecord> getAnimations(Pagination page){
+        Pageable pageable = PageRequest.of(page.getPage(), page.getPerPage());
+        return repository.findAll(pageable).stream().map(animation -> AnimationRecord.of(animation, url)).toList();
     }
 
     public AnimationRecord getAnimations(Long id) {
