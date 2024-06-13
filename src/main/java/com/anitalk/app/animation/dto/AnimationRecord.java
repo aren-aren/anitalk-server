@@ -1,7 +1,6 @@
 package com.anitalk.app.animation.dto;
 
 import com.anitalk.app.animation.AnimationEntity;
-import com.anitalk.app.animation.Day;
 
 import java.util.List;
 
@@ -9,37 +8,52 @@ public record AnimationRecord(
         Long id,
         String name,
         String plot,
+        String condition,
+        String productCompany,
+        String producer,
+        String writer,
+        String originWriter,
+        String season,
+        String onDate,
+        Integer episode,
         String startDate,
-        String endDate,
-        Integer episodes,
-        String day,
+        String currentDate,
         List<String> attach
 ) {
-    public AnimationRecord{
-        if(day != null) Day.valueOf(day);
-    }
-
     public static AnimationRecord of(AnimationEntity entity){
         return new AnimationRecord(
                 entity.getId(),
                 entity.getName(),
                 entity.getPlot(),
+                entity.getCondition(),
+                entity.getProductCompany(),
+                entity.getProducer(),
+                entity.getWriter(),
+                entity.getOriginWriter(),
+                entity.getSeason(),
+                entity.getOnDate(),
+                entity.getEpisode(),
                 entity.getStartDate(),
-                entity.getEndDate(),
-                entity.getEpisodes(),
-                entity.getDay().toString(),
+                entity.getCurrentDate(),
                 null
         );
     }
 
     public AnimationEntity toEntity() {
         return AnimationEntity.builder()
+                .id(id())
                 .name(name())
                 .plot(plot())
+                .condition(condition())
                 .startDate(startDate())
-                .endDate(endDate())
-                .episodes(episodes())
-                .day(Day.valueOf(day()))
+                .episode(episode())
+                .onDate(onDate())
+                .season(season())
+                .currentDate(currentDate())
+                .writer(writer())
+                .originWriter(originWriter())
+                .producer(producer())
+                .productCompany(productCompany())
                 .build();
     }
 
@@ -53,15 +67,29 @@ public record AnimationRecord(
         if(startDate() != null){
             entity.setStartDate(startDate());
         }
-        if(endDate() != null){
-            entity.setEndDate(endDate());
+        if(episode() != null){
+            entity.setEpisode(episode());
         }
-        if(episodes() != null){
-            entity.setEpisodes(episodes());
+        if(productCompany() != null){
+            entity.setProductCompany(productCompany());
         }
-        if(day() != null){
-            entity.setDay(Day.valueOf(day()));
+        if(producer() != null){
+            entity.setProducer(producer());
         }
-
+        if(writer() != null){
+            entity.setWriter(writer());
+        }
+        if(originWriter() != null){
+            entity.setOriginWriter(originWriter());
+        }
+        if(season() != null){
+            entity.setSeason(season());
+        }
+        if(onDate() != null){
+            entity.setOnDate(onDate());
+        }
+        if(currentDate() != null){
+            entity.setCurrentDate(currentDate());
+        }
     }
 }
