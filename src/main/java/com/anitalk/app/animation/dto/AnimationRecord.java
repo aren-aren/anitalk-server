@@ -18,9 +18,10 @@ public record AnimationRecord(
         Integer episode,
         String startDate,
         String currentDate,
-        Set<String> attach
+        Set<String> attach,
+        String thumbnailUrl
 ) {
-    public static AnimationRecord of(AnimationEntity entity){
+    public static AnimationRecord of(AnimationEntity entity, String url){
         return new AnimationRecord(
                 entity.getId(),
                 entity.getName(),
@@ -35,7 +36,8 @@ public record AnimationRecord(
                 entity.getEpisode(),
                 entity.getStartDate(),
                 entity.getCurrentDate(),
-                null
+                null,
+                url + entity.getAttach().getName()
         );
     }
 
