@@ -6,17 +6,17 @@ import lombok.*;
 @Data
 @Entity
 @Table(name = "attach")
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AttachEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "board_id", nullable = false)
-    private Long boardId;
+    @Column(name = "category", length = 20)
+    private String category;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -24,4 +24,6 @@ public class AttachEntity {
     @Column(name = "origin_name", nullable = false, length = 50)
     private String originName;
 
+    @Column(name = "parent_id")
+    private Long parentId;
 }

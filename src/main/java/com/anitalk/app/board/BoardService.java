@@ -1,5 +1,6 @@
 package com.anitalk.app.board;
 
+import com.anitalk.app.attach.AttachManager;
 import com.anitalk.app.board.dto.BoardAddRecord;
 import com.anitalk.app.board.dto.BoardListRecord;
 import com.anitalk.app.board.dto.BoardRecord;
@@ -14,6 +15,7 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
+    private final AttachManager attachManager;
 
     public List<BoardListRecord> getBoards(Long animationId) {
         return boardRepository.findAllByAnimationId(animationId).stream()
@@ -35,7 +37,11 @@ public class BoardService {
 
         /* ip 처리 필요 */
 
+
         entity = boardRepository.save(entity);
+
+        attachManager.connectAttaches("board", entity.getId(), board.attaches());
+
         return BoardRecord.of(entity);
     }
 

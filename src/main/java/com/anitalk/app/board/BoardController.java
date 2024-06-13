@@ -41,10 +41,11 @@ public class BoardController {
             boardAddRecord = new BoardAddRecord(
                     boardAddRecord.title(),
                     boardAddRecord.content(),
-                    boardAddRecord.nickname(),
-                    boardAddRecord.password(),
+                    null,
+                    null,
                     user.id(),
-                    boardAddRecord.category()
+                    boardAddRecord.category(),
+                    boardAddRecord.attaches()
             );
         }
         BoardRecord boardRecord = boardService.addBoard(animationId, boardAddRecord);
@@ -66,6 +67,7 @@ public class BoardController {
                 null,
                 null,
                 user.id(),
+                null,
                 null
         );
         BoardRecord putBoard = boardService.putBoard(id, animationId, boardAddRecord);

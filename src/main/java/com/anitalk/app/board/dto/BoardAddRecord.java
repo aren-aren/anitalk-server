@@ -3,13 +3,16 @@ package com.anitalk.app.board.dto;
 import com.anitalk.app.board.BoardEntity;
 import com.anitalk.app.utils.DateManager;
 
+import java.util.List;
+
 public record BoardAddRecord(
         String title,
         String content,
         String nickname,
         String password,
         Long userId,
-        String category
+        String category,
+        List<String> attaches
 ) {
 
     public BoardEntity toEntity(){
