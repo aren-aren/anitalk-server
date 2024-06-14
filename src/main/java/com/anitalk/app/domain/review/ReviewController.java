@@ -1,7 +1,9 @@
 package com.anitalk.app.domain.review;
 
+import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.review.dto.ReviewRecord;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
+import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<List<ReviewRecord>> getReviews(@PathVariable Long animationId){
-        List<ReviewRecord> boardRecords = reviewService.getReviews(animationId);
+    public ResponseEntity<PageAnd<ReviewRecord>> getReviews(@PathVariable Long animationId, Pagination pagination){
+        PageAnd<ReviewRecord> boardRecords = new PageAnd<>(reviewService.getReviews(animationId, pagination));
         return ResponseEntity.ok(boardRecords);
     }
 

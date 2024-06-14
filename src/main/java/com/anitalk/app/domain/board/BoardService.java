@@ -5,10 +5,12 @@ import com.anitalk.app.domain.board.dto.BoardAddRecord;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
 import com.anitalk.app.utils.DateManager;
+import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +19,9 @@ public class BoardService {
     private final LikeRepository likeRepository;
     private final AttachManager attachManager;
 
-    public List<BoardListRecord> getBoards(Long animationId) {
-        return boardRepository.findAllByAnimationId(animationId).stream()
-                .map(BoardListRecord::of)
-                .toList();
+    public Page<BoardListRecord> getBoards(Long animationId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        return boardRepository.findAllByAnimationId(animationId, pageable).map(BoardListRecord::of);
     }
 
     public BoardRecord getBoardById(Long animationId, Long id) {

@@ -20,7 +20,7 @@ public class AnimationService {
     private String url;
 
     public Page<AnimationRecord> getAnimations(Pagination page){
-        Pageable pageable = PageRequest.of(page.getPage(), page.getPerPage());
+        Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
         Page<AnimationEntity> all = repository.findAll(pageable);
 
         return all.map(animation -> AnimationRecord.of(animation, url));

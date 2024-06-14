@@ -4,8 +4,12 @@ import com.anitalk.app.domain.comment.dto.CommentAddRecord;
 import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
 import com.anitalk.app.utils.DateManager;
+import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +21,10 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository repository;
 
-    public List<CommentRecord> getComments(Long boardId) {
-        List<CommentEntity> comments = repository.findAllByBoardIdOrderByRefIdDescStepAsc(boardId);
-        return comments.stream().map(CommentRecord::of).toList();
+    public Page<CommentRecord> getComments(Long boardId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<CommentEntity> comments = repository.findAllByBoardIdOrderByRefIdDescStepAsc(boardId, pageable);
+        return comments.map(CommentRecord::of);
     }
 
     @Transactional
