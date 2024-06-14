@@ -17,4 +17,11 @@ public class UserService {
         userEntity = repository.save(userEntity);
         return UserRecord.of(userEntity);
     }
+
+    public UserRecord changeNickname(Long id, UserRecord userRecord) {
+        UserEntity userEntity = repository.findById(id).orElseThrow();
+        userEntity.setNickname(userRecord.nickname());
+        userEntity = repository.save(userEntity);
+        return UserRecord.of(userEntity);
+    }
 }

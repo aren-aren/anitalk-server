@@ -8,10 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -24,7 +22,6 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<UserRecord> join(@RequestBody AuthenticateUserRecord authenticateUserRecord){
-        System.out.println(authenticateUserRecord);
         UserRecord userRecord = userService.joinUser(authenticateUserRecord);
         return ResponseEntity.ok(userRecord);
     }
@@ -39,7 +36,19 @@ public class UserController {
 
         return ResponseEntity.ok(new UserTokenRecord(
                 new UserRecord(loginUser.id(), loginUser.email(), loginUser.nickname()) ,
-                new JwtToken("bearer", token)
+                new JwtToken("Bearer", token)
         ));
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<UserRecord> changeNickname(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @RequestBody UserRecord userRecord ) throws Exception {
+        if(user == null){
+            throw new Exception("로그인이 필요합니다.");
+        }
+
+        UserRecord changedUserRecord = userService.changeNickname(user.id(), userRecord);
+        return ResponseEntity.ok(changedUserRecord);
     }
 }
