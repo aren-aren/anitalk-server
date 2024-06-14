@@ -12,6 +12,6 @@ public class Pagination {
     }
 
     public Integer getSize() {
-        return size == null ? 20 : Math.max(size, 100);
+        return size == null ? 20 : Math.min(size, 100);
     }
 }
