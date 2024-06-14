@@ -1,7 +1,6 @@
 package com.anitalk.app.config;
 
 import com.anitalk.app.security.JwtAuthenticateFilter;
-import com.anitalk.app.user.UserLoginService;
 import com.anitalk.app.security.JwtGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

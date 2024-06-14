@@ -1,0 +1,38 @@
+package com.anitalk.app.domain.review;
+
+import com.anitalk.app.domain.review.dto.ReviewRecord;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ReviewService {
+    private final ReviewRepository repository;
+
+    public List<ReviewRecord> getReviews(Long animationId) {
+        return repository.findAllByAnimationId(animationId).stream().map(ReviewRecord::of).toList();
+    }
+
+    public ReviewRecord getReviewById(Long id) {
+        ReviewEntity reviewEntity = repository.findById(id).orElseThrow();
+        return ReviewRecord.of(reviewEntity);
+    }
+
+    public ReviewRecord addReview(ReviewRecord review) {
+        ReviewEntity entity = review.toEntity();
+        entity.getRate().setReview(entity);
+
+        repository.save(entity);
+
+        return ReviewRecord.of(entity);
+    }
+
+    public ReviewRecord putReview(ReviewRecord review) {
+        ReviewEntity entity = repository.findById(review.id()).orElseThrow();
+        review.putEntity(entity);
+        entity = repository.save(entity);
+        return ReviewRecord.of(entity);
+    }
+}
