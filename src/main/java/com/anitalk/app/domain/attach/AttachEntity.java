@@ -3,13 +3,15 @@ package com.anitalk.app.domain.attach;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "attach")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttachEntity {
+public class AttachEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -24,6 +26,6 @@ public class AttachEntity {
     @Column(name = "origin_name", nullable = false, length = 50)
     private String originName;
 
-    @Column(name = "parent_id")
+    @Column(name = "parent_id", insertable = false, updatable = false)
     private Long parentId;
 }

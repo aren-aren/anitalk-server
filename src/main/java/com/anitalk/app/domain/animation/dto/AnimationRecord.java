@@ -22,10 +22,6 @@ public record AnimationRecord(
         String thumbnailUrl
 ) {
     public static AnimationRecord of(AnimationEntity entity, String url){
-        String thumbnailUrl = null;
-        if(entity.getAttach() != null){
-            thumbnailUrl = url + entity.getAttach().getName();
-        }
 
         return new AnimationRecord(
                 entity.getId(),
@@ -42,7 +38,7 @@ public record AnimationRecord(
                 entity.getStartDate(),
                 entity.getCurrentDate(),
                 null,
-                thumbnailUrl
+                url
         );
     }
 

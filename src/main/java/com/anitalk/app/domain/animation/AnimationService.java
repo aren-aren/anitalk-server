@@ -1,7 +1,9 @@
 package com.anitalk.app.domain.animation;
 
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
+import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
+import com.anitalk.app.domain.attach.AttachRepository;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,29 +12,43 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AnimationService {
-    private final AnimationRepository repository;
+    private final AnimationRepository animationRepository;
+    private final AttachRepository attachRepository;
     private final AttachManager attachManager;
 
     @Value("${aws.url}")
     private String url;
+    private final String CATEGORY = "animations";
 
     public Page<AnimationRecord> getAnimations(Pagination page){
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
-        Page<AnimationEntity> all = repository.findAll(pageable);
+        Page<AnimationEntity> animations = animationRepository.findAll(pageable);
+        List<Long> ids = animations.map(AnimationEntity::getId).toList();
+        Map<Long, AttachEntity> attaches =
+                attachRepository.findAllByCategoryAndParentIdIn(CATEGORY, ids).stream()
+                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity->attachEntity));
 
-        return all.map(animation -> AnimationRecord.of(animation, url));
+        return animations.map(animation -> {
+            AttachEntity attach = attaches.get(animation.getId());
+            String thumbnailUrl = attach == null ? null : url + attach.getName();
+            return AnimationRecord.of(animation, thumbnailUrl);
+        });
     }
 
     public AnimationRecord getAnimations(Long id) {
-        AnimationEntity animationEntity = repository.findById(id).orElseThrow();
+        AnimationEntity animationEntity = animationRepository.findById(id).orElseThrow();
         return AnimationRecord.of(animationEntity, url);
     }
 
     public AnimationRecord addAnimations(AnimationRecord animationRecord) {
-        AnimationEntity addedEntity = repository.save(animationRecord.toEntity());
+        AnimationEntity addedEntity = animationRepository.save(animationRecord.toEntity());
         if(animationRecord.attach() != null){
             attachManager.connectAttaches("animations", addedEntity.getId(), animationRecord.attach());
         }
@@ -40,11 +56,11 @@ public class AnimationService {
     }
 
     public AnimationRecord putAnimations(Long id, AnimationRecord animationRecord) {
-        AnimationEntity entity = repository.findById(id).orElseThrow();
+        AnimationEntity entity = animationRepository.findById(id).orElseThrow();
         animationRecord.putEntity(entity);
         entity.setId(id);
 
-        AnimationEntity putAnimation = repository.save(entity);
+        AnimationEntity putAnimation = animationRepository.save(entity);
         if(animationRecord.attach() != null){
             attachManager.PutConnectionAttaches("animations", putAnimation.getId(), animationRecord.attach());
         }

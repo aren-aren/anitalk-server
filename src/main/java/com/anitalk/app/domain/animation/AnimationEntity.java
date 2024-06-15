@@ -52,8 +52,4 @@ public class AnimationEntity {
 
     @Column(name = "`current_date`", length = 10)
     private String currentDate;
-
-    @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "parent_id")
-    private AttachEntity attach;
 }
