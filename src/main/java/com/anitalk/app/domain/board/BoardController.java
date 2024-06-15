@@ -87,7 +87,7 @@ public class BoardController {
         return ResponseEntity.ok("success");
     }
 
-    @DeleteMapping("/{id}/unlike")
+    @DeleteMapping("/{id}/like")
     public ResponseEntity<String> unlikeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
