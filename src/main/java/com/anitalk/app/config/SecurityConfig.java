@@ -36,6 +36,7 @@ public class SecurityConfig {
 //                                .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
 //                                .requestMatchers(HttpMethod.PUT).authenticated()
 //                                .requestMatchers(HttpMethod.DELETE).authenticated()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
