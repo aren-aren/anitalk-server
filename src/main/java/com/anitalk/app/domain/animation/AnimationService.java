@@ -44,7 +44,9 @@ public class AnimationService {
 
     public AnimationRecord getAnimations(Long id) {
         AnimationEntity animationEntity = animationRepository.findById(id).orElseThrow();
-        return AnimationRecord.of(animationEntity, url);
+        AttachEntity attachEntity = attachRepository.findByCategoryAndParentId(CATEGORY, animationEntity.getId());
+
+        return AnimationRecord.of(animationEntity, url + attachEntity.getName());
     }
 
     public AnimationRecord addAnimations(AnimationRecord animationRecord) {

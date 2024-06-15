@@ -14,4 +14,6 @@ public interface AttachRepository extends JpaRepository<AttachEntity, Long> {
     AttachEntity findByParentId(Long parentId);
 
     Set<AttachEntity> findAllByCategoryAndParentIdIn(String category, List<Long> parentId);
+
+    AttachEntity findByCategoryAndParentId(String category, Long parentId);
 }
