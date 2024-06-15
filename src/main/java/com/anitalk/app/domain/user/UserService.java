@@ -24,4 +24,12 @@ public class UserService {
         userEntity = repository.save(userEntity);
         return UserRecord.of(userEntity);
     }
+
+    public UserRecord changePassword(Long id, AuthenticateUserRecord userRecord) {
+        UserEntity userEntity = repository.findById(id).orElseThrow();
+        userEntity.setPassword(passwordEncoder.encode(userRecord.password()));
+        userEntity = repository.save(userEntity);
+
+        return UserRecord.of(userEntity);
+    }
 }

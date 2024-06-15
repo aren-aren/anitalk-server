@@ -51,4 +51,16 @@ public class UserController {
         UserRecord changedUserRecord = userService.changeNickname(user.id(), userRecord);
         return ResponseEntity.ok(changedUserRecord);
     }
+
+    @PutMapping("/users/password")
+    public ResponseEntity<UserRecord> changePassword(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @RequestBody AuthenticateUserRecord userRecord ) throws Exception {
+        if(user == null){
+            throw new Exception("로그인이 필요합니다.");
+        }
+
+        UserRecord changedUserRecord = userService.changePassword(user.id(), userRecord);
+        return ResponseEntity.ok(changedUserRecord);
+    }
 }
