@@ -15,6 +15,12 @@ public record BoardListRecord(
 //        Integer likes
 ) {
     public static BoardListRecord of(BoardEntity entity){
+        String[] ips = entity.getIp().split("\\.");
+        String ip = entity.getIp();
+        if(ips.length > 1){
+            ip = ips[0] + "." + ips[1];
+        }
+
         return new BoardListRecord(
                 entity.getId(),
                 entity.getAnimationId(),
@@ -22,7 +28,7 @@ public record BoardListRecord(
                 entity.getHit(),
                 entity.getWriteDate(),
                 entity.getModifyDate(),
-                entity.getIp(),
+                ip,
                 entity.getUserId(),
                 entity.getContent()
 //                Hibernate.size(entity.getLike())

@@ -23,6 +23,12 @@ public record BoardRecord(
     }
 
     public static BoardRecord of(BoardEntity entity){
+        String[] ips = entity.getIp().split("\\.");
+        String ip = entity.getIp();
+        if(ips.length > 1){
+            ip = ips[0] + "." + ips[1];
+        }
+
         return new BoardRecord(
                 entity.getId(),
                 entity.getAnimationId(),
@@ -31,7 +37,7 @@ public record BoardRecord(
                 entity.getHit(),
                 entity.getWriteDate(),
                 entity.getModifyDate(),
-                entity.getIp(),
+                ip,
                 entity.getNickname(),
                 entity.getPassword(),
                 entity.getUserId(),

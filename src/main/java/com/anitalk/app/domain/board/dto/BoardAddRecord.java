@@ -10,6 +10,7 @@ public record BoardAddRecord(
         String content,
         String nickname,
         String password,
+        String ip,
         Long userId,
         String category,
         Set<String> attaches
@@ -21,6 +22,7 @@ public record BoardAddRecord(
                 .content(content())
                 .nickname(nickname())
                 .password(password())
+                .ip(ip())
                 .userId(userId())
                 .category(category())
                 .build();

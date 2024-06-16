@@ -6,6 +6,7 @@ import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.utils.Pagination;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,20 +36,24 @@ public class BoardController {
     public ResponseEntity<BoardRecord> addBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
-            @RequestBody BoardAddRecord boardAddRecord
+            @RequestBody BoardAddRecord boardAddRecord,
+            HttpServletRequest request
     ){
+        String ip = (String)request.getAttribute("ip");
+
         if(user != null) {
             boardAddRecord = new BoardAddRecord(
                     boardAddRecord.title(),
                     boardAddRecord.content(),
                     null,
                     null,
+                    boardAddRecord.ip(),
                     user.id(),
                     boardAddRecord.category(),
                     boardAddRecord.attaches()
             );
         }
-        BoardRecord boardRecord = boardService.addBoard(animationId, boardAddRecord);
+        BoardRecord boardRecord = boardService.addBoard(animationId, boardAddRecord, ip);
         return ResponseEntity.ok(boardRecord);
     }
 
@@ -66,6 +71,7 @@ public class BoardController {
                 record.content(),
                 null,
                 null,
+                record.ip(),
                 user.id(),
                 null,
                 null

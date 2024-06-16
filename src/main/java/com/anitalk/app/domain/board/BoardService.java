@@ -30,16 +30,13 @@ public class BoardService {
         return BoardRecord.of(entity);
     }
 
-    public BoardRecord addBoard(Long animationId, BoardAddRecord board) {
+    public BoardRecord addBoard(Long animationId, BoardAddRecord board, String ip) {
         BoardEntity entity = board.toEntity();
         entity.setAnimationId(animationId);
         entity.setHit(0L);
         entity.setIsDeleted(false);
         entity.setWriteDate(DateManager.nowDateTime());
-
-        /* ip 처리 필요 */
-        entity.setIp("123.123.123.123");
-
+        entity.setIp(ip);
 
         entity = boardRepository.save(entity);
 
