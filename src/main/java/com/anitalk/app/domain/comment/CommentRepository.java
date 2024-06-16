@@ -14,4 +14,6 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @Modifying
     @Query("UPDATE CommentEntity SET step = step + 1 WHERE refId = :refId AND step >= :step")
     int updateComments(Long refId, Long step);
+
+    Page<CommentEntity> findAllByUserId(Long userId, Pageable pageable);
 }

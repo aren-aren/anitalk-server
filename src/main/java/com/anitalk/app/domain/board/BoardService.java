@@ -38,11 +38,14 @@ public class BoardService {
         entity.setWriteDate(DateManager.nowDateTime());
 
         /* ip 처리 필요 */
+        entity.setIp("123.123.123.123");
 
 
         entity = boardRepository.save(entity);
 
-        attachManager.connectAttaches("board", entity.getId(), board.attaches());
+        if(board.attaches() != null){
+            attachManager.connectAttaches("board", entity.getId(), board.attaches());
+        }
 
         return BoardRecord.of(entity);
     }

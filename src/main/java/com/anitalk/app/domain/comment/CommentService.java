@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.comment;
 
+import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.comment.dto.CommentAddRecord;
 import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.stream.events.Comment;
 import java.util.List;
 
 @Service
@@ -77,4 +79,10 @@ public class CommentService {
         );
     }
 
+    public PageAnd<CommentRecord> getCommentsByUserId(Long userId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<CommentEntity> commentEntities = repository.findAllByUserId(userId, pageable);
+
+        return new PageAnd<>(commentEntities.map(CommentRecord::of));
+    }
 }

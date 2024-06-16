@@ -30,6 +30,7 @@ public record CommentAddRecord(
 
     public CommentEntity toEntity() {
         return CommentEntity.builder()
+                .userId(userId())
                 .content(content())
                 .nickname(nickname())
                 .password(password())
