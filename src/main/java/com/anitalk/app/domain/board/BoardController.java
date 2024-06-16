@@ -80,6 +80,18 @@ public class BoardController {
         return ResponseEntity.ok(putBoard);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteBoard(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            @PathVariable Long id
+    ) throws Exception {
+        if(user == null) throw new Exception("로그인이 필요합니다");
+
+        boardService.deleteBoard(user.id(), animationId, id);
+        return ResponseEntity.ok("deleted : " + id);
+    }
+
     @PostMapping("/{id}/like")
     public ResponseEntity<String> likeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,

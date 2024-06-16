@@ -23,16 +23,16 @@ public class BoardService {
 
     public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        return new PageAnd<>(boardRepository.findAllByAnimationId(animationId, pageable).map(BoardListRecord::of));
+        return new PageAnd<>(boardRepository.findAllByAnimationIdAndDeletedIsFalse(animationId, pageable).map(BoardListRecord::of));
     }
 
     public PageAnd<BoardListRecord> getBoards(Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        return new PageAnd<>(boardRepository.findAll(pageable).map(BoardListRecord::of));
+        return new PageAnd<>(boardRepository.findAllByDeleted(false, pageable).map(BoardListRecord::of));
     }
 
     public BoardRecord getBoardById(Long animationId, Long id) {
-        BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
+        BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
         return BoardRecord.of(entity);
     }
 
@@ -40,7 +40,7 @@ public class BoardService {
         BoardEntity entity = board.toEntity();
         entity.setAnimationId(animationId);
         entity.setHit(0L);
-        entity.setIsDeleted(false);
+        entity.setDeleted(false);
         entity.setWriteDate(DateManager.nowDateTime());
         entity.setIp(ip);
 
@@ -54,7 +54,7 @@ public class BoardService {
     }
 
     public BoardRecord putBoard(Long id, Long animationId, BoardAddRecord record) {
-        BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
+        BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
         record.putEntity(entity);
 
         entity = boardRepository.save(entity);
@@ -74,8 +74,14 @@ public class BoardService {
 
     public PageAnd<BoardListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardEntity> boardEntities = boardRepository.findAllByUserId(userId, pageable);
+        Page<BoardEntity> boardEntities = boardRepository.findAllByUserIdAndDeletedIsFalse(userId, pageable);
 
         return new PageAnd<>(boardEntities.map(BoardListRecord::of));
+    }
+
+    public void deleteBoard(Long userId, Long animationId, Long boardId) {
+        BoardEntity board = boardRepository.findByUserIdAndAnimationIdAndIdAndDeletedIsFalse(userId, animationId, boardId).orElseThrow();
+        board.setDeleted(true);
+        boardRepository.save(board);
     }
 }

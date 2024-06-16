@@ -33,8 +33,8 @@ public class BoardEntity {
     @Column
     private String modifyDate;
 
-    @Column
-    private Boolean isDeleted = false;
+    @Column(name = "is_deleted")
+    private Boolean deleted = false;
 
     @Column
     private String ip;
