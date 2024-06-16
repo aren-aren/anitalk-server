@@ -14,19 +14,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.stream.events.Comment;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CommentService {
     private final CommentRepository repository;
 
-    public Page<CommentRecord> getComments(Long boardId, Pagination pagination) {
+    public PageAnd<CommentRecord> getComments(Long boardId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         Page<CommentEntity> comments = repository.findAllByBoardIdOrderByRefIdDescStepAsc(boardId, pageable);
-        return comments.map(CommentRecord::of);
+        return new PageAnd<>(comments.map(CommentRecord::of));
     }
 
     @Transactional

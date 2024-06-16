@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,9 +21,14 @@ public class BoardService {
     private final LikeRepository likeRepository;
     private final AttachManager attachManager;
 
-    public Page<BoardListRecord> getBoards(Long animationId, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-        return boardRepository.findAllByAnimationId(animationId, pageable).map(BoardListRecord::of);
+    public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
+        return new PageAnd<>(boardRepository.findAllByAnimationId(animationId, pageable).map(BoardListRecord::of));
+    }
+
+    public PageAnd<BoardListRecord> getBoards(Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
+        return new PageAnd<>(boardRepository.findAll(pageable).map(BoardListRecord::of));
     }
 
     public BoardRecord getBoardById(Long animationId, Long id) {
@@ -67,7 +73,7 @@ public class BoardService {
     }
 
     public PageAnd<BoardListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
         Page<BoardEntity> boardEntities = boardRepository.findAllByUserId(userId, pageable);
 
         return new PageAnd<>(boardEntities.map(BoardListRecord::of));

@@ -21,7 +21,7 @@ public class CommentController {
 
     @GetMapping
     public ResponseEntity<PageAnd<CommentRecord>> getComments(@PathVariable Long boardId, Pagination pagination){
-        PageAnd<CommentRecord> comments = new PageAnd<>(commentService.getComments(boardId, pagination));
+        PageAnd<CommentRecord> comments = commentService.getComments(boardId, pagination);
         return ResponseEntity.ok(comments);
     }
 

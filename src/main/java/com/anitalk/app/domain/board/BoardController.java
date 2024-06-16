@@ -22,7 +22,7 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<PageAnd<BoardListRecord>> getBoards(@PathVariable Long animationId, Pagination pagination){
-        PageAnd<BoardListRecord> boardRecords = new PageAnd<>(boardService.getBoards(animationId, pagination));
+        PageAnd<BoardListRecord> boardRecords = boardService.getBoards(animationId, pagination);
         return ResponseEntity.ok(boardRecords);
     }
 

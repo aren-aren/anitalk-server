@@ -20,4 +20,10 @@ public class BoardAllController {
         PageAnd<BoardListRecord> boardListRecord = boardService.getBoardsByUserId(userId, pagination);
         return ResponseEntity.ok(boardListRecord);
     }
+
+    @GetMapping
+    public ResponseEntity<PageAnd<BoardListRecord>> getBoards(Pagination pagination){
+        PageAnd<BoardListRecord> boardListRecord = boardService.getBoards(pagination);
+        return ResponseEntity.ok(boardListRecord);
+    }
 }
