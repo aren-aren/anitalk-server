@@ -16,7 +16,7 @@ public class BoardAllController {
     private final BoardService boardService;
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<PageAnd<BoardListRecord>> getBoardsByUserId(@PathVariable String userId, @RequestParam Pagination pagination){
+    public ResponseEntity<PageAnd<BoardListRecord>> getBoardsByUserId(@PathVariable Long userId, Pagination pagination){
         PageAnd<BoardListRecord> boardListRecord = boardService.getBoardsByUserId(userId, pagination);
         return ResponseEntity.ok(boardListRecord);
     }

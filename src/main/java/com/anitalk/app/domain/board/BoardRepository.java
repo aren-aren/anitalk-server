@@ -14,5 +14,5 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     Optional<BoardEntity> findByIdAndAnimationId(Long id, Long animationId);
     Optional<BoardEntity> findByAnimationId(Long animationId);
 
-    Page<BoardEntity> findAllByUserId(String userId, Pagination pagination);
+    Page<BoardEntity> findAllByUserId(Long userId, Pageable pageable);
 }

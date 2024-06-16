@@ -66,8 +66,9 @@ public class BoardService {
         likeRepository.delete(like);
     }
 
-    public PageAnd<BoardListRecord> getBoardsByUserId(String userId, Pagination pagination) {
-        Page<BoardEntity> boardEntities = boardRepository.findAllByUserId(userId, pagination);
+    public PageAnd<BoardListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<BoardEntity> boardEntities = boardRepository.findAllByUserId(userId, pageable);
 
         return new PageAnd<>(boardEntities.map(BoardListRecord::of));
     }
