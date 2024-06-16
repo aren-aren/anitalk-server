@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.user;
 
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
+import com.anitalk.app.domain.user.dto.EmailDuplicationRecord;
 import com.anitalk.app.domain.user.dto.UserRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,5 +32,17 @@ public class UserService {
         userEntity = repository.save(userEntity);
 
         return UserRecord.of(userEntity);
+    }
+
+    public EmailDuplicationRecord checkEmail(String email) throws Exception {
+        Long count = repository.countByEmail(email);
+        if(count > 1) throw new Exception("중복된 이메일이 많음");
+
+        return new EmailDuplicationRecord(email, count == 1);
+    }
+
+    public boolean emailValidate(String email){
+        String regex = "^\\w([-_.]?\\w)*@\\w([-_.]?\\w)*.[a-zA-Z]+$";
+        return email.matches(regex);
     }
 }

@@ -63,4 +63,14 @@ public class UserController {
         UserRecord changedUserRecord = userService.changePassword(user.id(), userRecord);
         return ResponseEntity.ok(changedUserRecord);
     }
+
+    @GetMapping("/users/email/{email}")
+    public ResponseEntity<EmailDuplicationRecord> checkEmail(@PathVariable String email) throws Exception {
+        if(userService.emailValidate(email)){
+            throw new Exception("이메일 형식이 맞지 않습니다.");
+        }
+
+        EmailDuplicationRecord result = userService.checkEmail(email);
+        return ResponseEntity.ok(result);
+    }
 }
