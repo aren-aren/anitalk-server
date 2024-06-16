@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.board;
 
+import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.board.dto.BoardAddRecord;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
@@ -63,5 +64,11 @@ public class BoardService {
         LikeEntityId likeId = new LikeEntityId(userId, boardId);
         LikeEntity like = likeRepository.findById(likeId).orElseThrow();
         likeRepository.delete(like);
+    }
+
+    public PageAnd<BoardListRecord> getBoardsByUserId(String userId, Pagination pagination) {
+        Page<BoardEntity> boardEntities = boardRepository.findAllByUserId(userId, pagination);
+
+        return new PageAnd<>(boardEntities.map(BoardListRecord::of));
     }
 }
