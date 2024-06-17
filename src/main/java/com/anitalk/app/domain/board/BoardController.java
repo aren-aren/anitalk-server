@@ -4,6 +4,7 @@ import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.board.dto.BoardAddRecord;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
+import com.anitalk.app.domain.board.dto.BoardWriterRecord;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.utils.Pagination;
 import jakarta.servlet.http.HttpServletRequest;
@@ -89,6 +90,20 @@ public class BoardController {
         if(user == null) throw new Exception("로그인이 필요합니다");
 
         boardService.deleteBoard(user.id(), animationId, id);
+        return ResponseEntity.ok("deleted : " + id);
+    }
+
+    @DeleteMapping("/{id}/anonymous")
+    public ResponseEntity<String> deleteBoard(
+            @RequestBody BoardWriterRecord boardWriterRecord,
+            @PathVariable Long animationId,
+            @PathVariable Long id
+    ) throws Exception {
+        if(boardWriterRecord == null || !boardWriterRecord.validate()){
+            throw new Exception("게시글 작성자 정보가 유효하지 않습니다.");
+        }
+
+        boardService.deleteBoard(id, animationId, boardWriterRecord);
         return ResponseEntity.ok("deleted : " + id);
     }
 

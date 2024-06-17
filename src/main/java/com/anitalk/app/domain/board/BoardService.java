@@ -5,6 +5,7 @@ import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.board.dto.BoardAddRecord;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
+import com.anitalk.app.domain.board.dto.BoardWriterRecord;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +82,18 @@ public class BoardService {
 
     public void deleteBoard(Long userId, Long animationId, Long boardId) {
         BoardEntity board = boardRepository.findByUserIdAndAnimationIdAndIdAndDeletedIsFalse(userId, animationId, boardId).orElseThrow();
+        board.setDeleted(true);
+        boardRepository.save(board);
+    }
+
+    public void deleteBoard(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord) {
+        BoardEntity board =
+                boardRepository.findByNicknameAndPasswordAndAnimationIdAndIdAndDeletedIsFalse(
+                    boardWriterRecord.nickname(),
+                    boardWriterRecord.password(),
+                    animationId,
+                    boardId)
+                .orElseThrow();
         board.setDeleted(true);
         boardRepository.save(board);
     }
