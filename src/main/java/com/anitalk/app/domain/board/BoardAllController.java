@@ -2,6 +2,7 @@ package com.anitalk.app.domain.board;
 
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
+import com.anitalk.app.domain.board.dto.BoardRecord;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,5 +26,11 @@ public class BoardAllController {
     public ResponseEntity<PageAnd<BoardListRecord>> getBoards(Pagination pagination){
         PageAnd<BoardListRecord> boardListRecord = boardService.getBoards(pagination);
         return ResponseEntity.ok(boardListRecord);
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardRecord> getBoardById(@PathVariable Long boardId) throws Exception {
+        BoardRecord boardRecord = boardService.getBoardById(boardId);
+        return ResponseEntity.ok(boardRecord);
     }
 }

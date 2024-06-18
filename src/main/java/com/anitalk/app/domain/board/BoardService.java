@@ -37,6 +37,14 @@ public class BoardService {
         return BoardRecord.of(entity);
     }
 
+    public BoardRecord getBoardById(Long boardId) throws Exception {
+        BoardEntity entity = boardRepository.findById(boardId).orElseThrow();
+        if(entity.getDeleted()){
+            throw new Exception("삭제된 게시글 입니다.");
+        }
+        return BoardRecord.of(entity);
+    }
+
     public BoardRecord addBoard(Long animationId, BoardAddRecord board, String ip) {
         BoardEntity entity = board.toEntity();
         entity.setAnimationId(animationId);
@@ -97,4 +105,5 @@ public class BoardService {
         board.setDeleted(true);
         boardRepository.save(board);
     }
+
 }

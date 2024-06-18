@@ -21,4 +21,5 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     Page<BoardEntity> findAllByDeleted(Boolean deleted, Pageable pageable);
 
     Optional<BoardEntity> findByNicknameAndPasswordAndAnimationIdAndIdAndDeletedIsFalse(String nickname, String password, Long animationId, Long boardId);
+
 }
