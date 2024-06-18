@@ -66,7 +66,7 @@ public class UserController {
 
     @GetMapping("/users/email/{email}")
     public ResponseEntity<EmailDuplicationRecord> checkEmail(@PathVariable String email) throws Exception {
-        if(userService.emailValidate(email)){
+        if(!userService.emailValidate(email)){
             throw new Exception("이메일 형식이 맞지 않습니다.");
         }
 
