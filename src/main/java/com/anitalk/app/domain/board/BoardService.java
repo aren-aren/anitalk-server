@@ -34,14 +34,13 @@ public class BoardService {
 
     public BoardRecord getBoardById(Long animationId, Long id) {
         BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
+
         return BoardRecord.of(entity);
     }
 
-    public BoardRecord getBoardById(Long boardId) throws Exception {
-        BoardEntity entity = boardRepository.findById(boardId).orElseThrow();
-        if(entity.getDeleted()){
-            throw new Exception("삭제된 게시글 입니다.");
-        }
+    public BoardRecord getBoardById(Long boardId) {
+        BoardEntity entity = boardRepository.findByIdAndDeletedIsFalse(boardId).orElseThrow();
+
         return BoardRecord.of(entity);
     }
 

@@ -28,7 +28,7 @@ public class BoardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardRecord> getBoardById(@PathVariable Long animationId, @PathVariable Long id){
+    public ResponseEntity<BoardRecord> getBoardById(@PathVariable Long animationId, @PathVariable Long id) {
         BoardRecord boardRecord = boardService.getBoardById(animationId, id);
         return ResponseEntity.ok(boardRecord);
     }

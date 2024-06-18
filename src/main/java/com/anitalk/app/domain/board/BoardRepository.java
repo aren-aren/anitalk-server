@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     Page<BoardEntity> findAllByAnimationIdAndDeletedIsFalse(Long animationId, Pageable pagination);
-    Optional<BoardEntity> findByIdAndAnimationIdAndDeletedIsFalse(Long id, Long animationId);
+
     Optional<BoardEntity> findByAnimationIdAndDeletedIsFalse(Long animationId);
 
     Page<BoardEntity> findAllByUserIdAndDeletedIsFalse(Long userId, Pageable pageable);
@@ -22,4 +22,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
     Optional<BoardEntity> findByNicknameAndPasswordAndAnimationIdAndIdAndDeletedIsFalse(String nickname, String password, Long animationId, Long boardId);
 
+    Optional<BoardEntity> findByIdAndAnimationIdAndDeletedIsFalse(Long id, Long animationId);
+
+    Optional<BoardEntity> findByIdAndDeletedIsFalse(Long boardId);
 }
