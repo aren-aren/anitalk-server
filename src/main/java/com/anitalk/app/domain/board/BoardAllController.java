@@ -1,7 +1,7 @@
 package com.anitalk.app.domain.board;
 
 import com.anitalk.app.commons.PageAnd;
-import com.anitalk.app.domain.board.dto.BoardListRecord;
+import com.anitalk.app.domain.board.dto.BoardAnimationNameListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ public class BoardAllController {
     private final BoardService boardService;
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<PageAnd<BoardListRecord>> getBoardsByUserId(@PathVariable Long userId, Pagination pagination){
-        PageAnd<BoardListRecord> boardListRecord = boardService.getBoardsByUserId(userId, pagination);
+    public ResponseEntity<PageAnd<BoardAnimationNameListRecord>> getBoardsByUserId(@PathVariable Long userId, Pagination pagination){
+        PageAnd<BoardAnimationNameListRecord> boardListRecord = boardService.getBoardsByUserId(userId, pagination);
         return ResponseEntity.ok(boardListRecord);
     }
 
     @GetMapping
-    public ResponseEntity<PageAnd<BoardListRecord>> getBoards(Pagination pagination){
-        PageAnd<BoardListRecord> boardListRecord = boardService.getBoards(pagination);
+    public ResponseEntity<PageAnd<BoardAnimationNameListRecord>> getBoards(Pagination pagination){
+        PageAnd<BoardAnimationNameListRecord> boardListRecord = boardService.getBoards(pagination);
         return ResponseEntity.ok(boardListRecord);
     }
 

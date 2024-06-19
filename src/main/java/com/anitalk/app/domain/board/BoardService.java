@@ -1,11 +1,9 @@
 package com.anitalk.app.domain.board;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.domain.animation.AnimationEntity;
 import com.anitalk.app.domain.attach.AttachManager;
-import com.anitalk.app.domain.board.dto.BoardAddRecord;
-import com.anitalk.app.domain.board.dto.BoardListRecord;
-import com.anitalk.app.domain.board.dto.BoardRecord;
-import com.anitalk.app.domain.board.dto.BoardWriterRecord;
+import com.anitalk.app.domain.board.dto.*;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +25,9 @@ public class BoardService {
         return new PageAnd<>(boardRepository.findAllByAnimationIdAndDeletedIsFalse(animationId, pageable).map(BoardListRecord::of));
     }
 
-    public PageAnd<BoardListRecord> getBoards(Pagination pagination) {
+    public PageAnd<BoardAnimationNameListRecord> getBoards(Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        return new PageAnd<>(boardRepository.findAllByDeleted(false, pageable).map(BoardListRecord::of));
+        return new PageAnd<>(boardRepository.findAllByDeleted(false, pageable).map(BoardAnimationNameListRecord::of));
     }
 
     public BoardRecord getBoardById(Long animationId, Long id) {
@@ -46,7 +44,9 @@ public class BoardService {
 
     public BoardRecord addBoard(Long animationId, BoardAddRecord board, String ip) {
         BoardEntity entity = board.toEntity();
-        entity.setAnimationId(animationId);
+        AnimationEntity animationEntity = new AnimationEntity();
+        animationEntity.setId(animationId);
+        entity.setAnimation(animationEntity);
         entity.setHit(0L);
         entity.setDeleted(false);
         entity.setWriteDate(DateManager.nowDateTime());
@@ -80,11 +80,11 @@ public class BoardService {
         likeRepository.delete(like);
     }
 
-    public PageAnd<BoardListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
+    public PageAnd<BoardAnimationNameListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
         Page<BoardEntity> boardEntities = boardRepository.findAllByUserIdAndDeletedIsFalse(userId, pageable);
 
-        return new PageAnd<>(boardEntities.map(BoardListRecord::of));
+        return new PageAnd<>(boardEntities.map(BoardAnimationNameListRecord::of));
     }
 
     public void deleteBoard(Long userId, Long animationId, Long boardId) {

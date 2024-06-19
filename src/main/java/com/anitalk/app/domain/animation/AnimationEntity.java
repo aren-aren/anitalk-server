@@ -1,8 +1,10 @@
 package com.anitalk.app.domain.animation;
 
-import com.anitalk.app.domain.attach.AttachEntity;
+import com.anitalk.app.domain.board.BoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 
 @Data
@@ -52,4 +54,7 @@ public class AnimationEntity {
 
     @Column(name = "`current_date`", length = 10)
     private String currentDate;
+
+    @OneToMany(mappedBy = "animation")
+    private List<BoardEntity> boards;
 }

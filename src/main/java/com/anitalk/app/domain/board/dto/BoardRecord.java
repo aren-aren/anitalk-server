@@ -31,7 +31,7 @@ public record BoardRecord(
 
         return new BoardRecord(
                 entity.getId(),
-                entity.getAnimationId(),
+                entity.getAnimation().getId(),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getHit(),

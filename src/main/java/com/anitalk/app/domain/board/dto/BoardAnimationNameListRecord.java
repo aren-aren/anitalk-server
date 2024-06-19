@@ -2,9 +2,10 @@ package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
 
-public record BoardListRecord(
+public record BoardAnimationNameListRecord(
         Long id,
         Long animationId,
+        String animationName,
         String title,
         Long hit,
         String writeDate,
@@ -12,26 +13,19 @@ public record BoardListRecord(
         String nickname,
         Long userId,
         String category
-//        Integer likes
 ) {
-    public static BoardListRecord of(BoardEntity entity){
-        String[] ips = entity.getIp().split("\\.");
-        String ip = entity.getIp();
-        if(ips.length > 1){
-            ip = ips[0] + "." + ips[1];
-        }
-
-        return new BoardListRecord(
+    public static BoardAnimationNameListRecord of(BoardEntity entity){
+        return new BoardAnimationNameListRecord(
                 entity.getId(),
                 entity.getAnimation().getId(),
+                entity.getAnimation().getName(),
                 entity.getTitle(),
                 entity.getHit(),
                 entity.getWriteDate(),
-                entity.getModifyDate(),
-                ip,
+                entity.getIp(),
+                entity.getNickname(),
                 entity.getUserId(),
-                entity.getContent()
-//                Hibernate.size(entity.getLike())
+                entity.getCategory().name()
         );
     }
 }

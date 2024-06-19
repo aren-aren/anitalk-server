@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.board;
 
+import com.anitalk.app.domain.animation.AnimationEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +15,9 @@ public class BoardEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long animationId;
+    @ManyToOne
+    @JoinColumn(name = "animation_id")
+    AnimationEntity animation;
 
     @Column
     private String title;
@@ -65,7 +67,8 @@ public class BoardEntity {
                        String password,
                        Long userId,
                        String category) {
-        this.animationId = animationId;
+        this.animation = new AnimationEntity();
+        animation.setId(animationId);
         this.title = title;
         this.content = content;
         this.ip = ip;
