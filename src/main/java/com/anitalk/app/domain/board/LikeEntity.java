@@ -1,8 +1,7 @@
 package com.anitalk.app.domain.board;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.anitalk.app.domain.user.UserEntity;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +13,17 @@ public class LikeEntity {
     @EmbeddedId
     private LikeEntityId id;
 
-    LikeEntity(Long userId, Long boardId){
+    @ManyToOne
+    @MapsId("boardId")
+    @JoinColumn(name = "board_id")
+    private BoardEntity board;
+
+    @ManyToOne
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    LikeEntity(Long userId, Long boardId) {
         id = new LikeEntityId(userId, boardId);
     }
 }

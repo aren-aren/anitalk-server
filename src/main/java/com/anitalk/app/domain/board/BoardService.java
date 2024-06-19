@@ -4,6 +4,7 @@ import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.animation.AnimationEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.board.dto.*;
+import com.anitalk.app.domain.user.UserEntity;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,13 @@ public class BoardService {
 
     public void likeBoard(Long userId, Long boardId) {
         LikeEntity like = new LikeEntity(userId, boardId);
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        BoardEntity board = new BoardEntity();
+        board.setId(boardId);
+
+        like.setUser(user);
+        like.setBoard(board);
         likeRepository.save(like);
     }
 

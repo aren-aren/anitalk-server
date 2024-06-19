@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "board")
@@ -54,9 +56,9 @@ public class BoardEntity {
     @Enumerated(EnumType.ORDINAL)
     private BoardCategory category;
 
-//    @OneToMany
-//    @JoinColumn(name = "board_id")
-//    List<LikeEntity> like;
+    @OneToMany
+    @JoinColumn(name = "board_id")
+    List<LikeEntity> like;
 
     @Builder
     public BoardEntity(Long animationId,

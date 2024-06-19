@@ -1,7 +1,10 @@
 package com.anitalk.app.domain.user;
 
+import com.anitalk.app.domain.board.LikeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -21,6 +24,10 @@ public class UserEntity {
 
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    List<LikeEntity> likes;
 
     @Builder
     public UserEntity(Long id, String email, String nickname, String password) {
