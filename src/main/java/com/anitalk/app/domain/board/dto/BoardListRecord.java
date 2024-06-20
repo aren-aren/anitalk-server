@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
+import org.hibernate.Hibernate;
 
 public record BoardListRecord(
         Long id,
@@ -11,8 +12,8 @@ public record BoardListRecord(
         String ip,
         String nickname,
         Long userId,
-        String category
-//        Integer likes
+        String category,
+        Integer likes
 ) {
     public static BoardListRecord of(BoardEntity entity){
         String[] ips = entity.getIp().split("\\.");
@@ -30,8 +31,8 @@ public record BoardListRecord(
                 entity.getModifyDate(),
                 ip,
                 entity.getUserId(),
-                entity.getContent()
-//                Hibernate.size(entity.getLike())
+                entity.getContent(),
+                Hibernate.size(entity.getLike())
         );
     }
 }

@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
+import org.hibernate.Hibernate;
 
 public record BoardAnimationNameListRecord(
         Long id,
@@ -12,7 +13,8 @@ public record BoardAnimationNameListRecord(
         String ip,
         String nickname,
         Long userId,
-        String category
+        String category,
+        Integer likes
 ) {
     public static BoardAnimationNameListRecord of(BoardEntity entity){
         return new BoardAnimationNameListRecord(
@@ -25,7 +27,8 @@ public record BoardAnimationNameListRecord(
                 entity.getIp(),
                 entity.getNickname(),
                 entity.getUserId(),
-                entity.getCategory().name()
+                entity.getCategory().name(),
+                Hibernate.size(entity.getLike())
         );
     }
 }

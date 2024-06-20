@@ -2,7 +2,9 @@ package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardCategory;
 import com.anitalk.app.domain.board.BoardEntity;
+import com.anitalk.app.domain.board.LikeEntityId;
 import com.anitalk.app.utils.DateManager;
+import org.hibernate.Hibernate;
 
 public record BoardRecord(
         Long id,
@@ -16,7 +18,8 @@ public record BoardRecord(
         String nickname,
         String password,
         Long userId,
-        String category
+        String category,
+        Integer likes
 ) {
     public BoardRecord{
         if(category != null) BoardCategory.valueOf(category);
@@ -41,7 +44,8 @@ public record BoardRecord(
                 entity.getNickname(),
                 entity.getPassword(),
                 entity.getUserId(),
-                entity.getCategory().toString()
+                entity.getCategory().toString(),
+                Hibernate.size(entity.getLike())
         );
     }
 
