@@ -2,6 +2,7 @@ package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardCategory;
 import com.anitalk.app.domain.board.BoardEntity;
+import com.anitalk.app.domain.board.LikeEntity;
 import com.anitalk.app.domain.board.LikeEntityId;
 import com.anitalk.app.utils.DateManager;
 import org.hibernate.Hibernate;
@@ -19,33 +20,36 @@ public record BoardRecord(
         String password,
         Long userId,
         String category,
-        Integer likes
+        BoardLikeRecord like
 ) {
     public BoardRecord{
         if(category != null) BoardCategory.valueOf(category);
     }
 
-    public static BoardRecord of(BoardEntity entity){
-        String[] ips = entity.getIp().split("\\.");
-        String ip = entity.getIp();
+    public static BoardRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
+        String[] ips = boardEntity.getIp().split("\\.");
+        String ip = boardEntity.getIp();
         if(ips.length > 1){
             ip = ips[0] + "." + ips[1];
         }
 
         return new BoardRecord(
-                entity.getId(),
-                entity.getAnimation().getId(),
-                entity.getTitle(),
-                entity.getContent(),
-                entity.getHit(),
-                entity.getWriteDate(),
-                entity.getModifyDate(),
+                boardEntity.getId(),
+                boardEntity.getAnimation().getId(),
+                boardEntity.getTitle(),
+                boardEntity.getContent(),
+                boardEntity.getHit(),
+                boardEntity.getWriteDate(),
+                boardEntity.getModifyDate(),
                 ip,
-                entity.getNickname(),
-                entity.getPassword(),
-                entity.getUserId(),
-                entity.getCategory().toString(),
-                Hibernate.size(entity.getLike())
+                boardEntity.getNickname(),
+                boardEntity.getPassword(),
+                boardEntity.getUserId(),
+                boardEntity.getCategory().toString(),
+                new BoardLikeRecord(
+                        boardEntity.getLike().size(),
+                        boardEntity.getLike().contains(likeEntity)
+                )
         );
     }
 

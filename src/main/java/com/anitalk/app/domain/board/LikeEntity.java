@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @Entity
 @Table(name = "`like`")
@@ -23,7 +25,19 @@ public class LikeEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    LikeEntity(Long userId, Long boardId) {
+    public LikeEntity(Long userId, Long boardId) {
         id = new LikeEntityId(userId, boardId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LikeEntity that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

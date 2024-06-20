@@ -21,26 +21,30 @@ public class BoardService {
     private final LikeRepository likeRepository;
     private final AttachManager attachManager;
 
-    public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination) {
+    public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        return new PageAnd<>(boardRepository.findAllByAnimationIdAndDeletedIsFalse(animationId, pageable).map(BoardListRecord::of));
+        Page<BoardListRecord> boards = boardRepository.findAllByAnimationIdAndDeletedIsFalse(animationId, pageable)
+                .map(board -> BoardListRecord.of(board, new LikeEntity(userId , board.getId())));
+        return new PageAnd<>(boards);
     }
 
-    public PageAnd<BoardAnimationNameListRecord> getBoards(Pagination pagination) {
+    public PageAnd<BoardAnimationNameListRecord> getBoards(Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        return new PageAnd<>(boardRepository.findAllByDeleted(false, pageable).map(BoardAnimationNameListRecord::of));
+        Page<BoardAnimationNameListRecord> boards = boardRepository.findAllByDeleted(false, pageable)
+                .map(board -> BoardAnimationNameListRecord.of(board, new LikeEntity(userId, board.getId())));
+        return new PageAnd<>(boards);
     }
 
-    public BoardRecord getBoardById(Long animationId, Long id) {
+    public BoardRecord getBoardById(Long animationId, Long id, Long userId) {
         BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
 
-        return BoardRecord.of(entity);
+        return BoardRecord.of(entity, new LikeEntity(userId, entity.getId()));
     }
 
-    public BoardRecord getBoardById(Long boardId) {
+    public BoardRecord getBoardById(Long boardId, Long userId) {
         BoardEntity entity = boardRepository.findByIdAndDeletedIsFalse(boardId).orElseThrow();
 
-        return BoardRecord.of(entity);
+        return BoardRecord.of(entity, new LikeEntity(userId, entity.getId()));
     }
 
     public BoardRecord addBoard(Long animationId, BoardAddRecord board, String ip) {
@@ -59,7 +63,7 @@ public class BoardService {
             attachManager.connectAttaches("board", entity.getId(), board.attaches());
         }
 
-        return BoardRecord.of(entity);
+        return BoardRecord.of(entity, new LikeEntity(entity.getUserId(), entity.getId()));
     }
 
     public BoardRecord putBoard(Long id, Long animationId, BoardAddRecord record) {
@@ -67,7 +71,7 @@ public class BoardService {
         record.putEntity(entity);
 
         entity = boardRepository.save(entity);
-        return BoardRecord.of(entity);
+        return BoardRecord.of(entity, new LikeEntity(entity.getUserId(), entity.getId()));
     }
 
     public void likeBoard(Long userId, Long boardId) {
@@ -90,9 +94,10 @@ public class BoardService {
 
     public PageAnd<BoardAnimationNameListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardEntity> boardEntities = boardRepository.findAllByUserIdAndDeletedIsFalse(userId, pageable);
+        Page<BoardAnimationNameListRecord> boardEntities = boardRepository.findAllByUserIdAndDeletedIsFalse(userId, pageable)
+                .map(board -> BoardAnimationNameListRecord.of(board, new LikeEntity(userId, board.getId())));
 
-        return new PageAnd<>(boardEntities.map(BoardAnimationNameListRecord::of));
+        return new PageAnd<>(boardEntities);
     }
 
     public void deleteBoard(Long userId, Long animationId, Long boardId) {

@@ -1,6 +1,8 @@
 package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
+import com.anitalk.app.domain.board.LikeEntity;
+import com.anitalk.app.domain.board.LikeEntityId;
 import org.hibernate.Hibernate;
 
 public record BoardListRecord(
@@ -13,26 +15,29 @@ public record BoardListRecord(
         String nickname,
         Long userId,
         String category,
-        Integer likes
+        BoardLikeRecord like
 ) {
-    public static BoardListRecord of(BoardEntity entity){
-        String[] ips = entity.getIp().split("\\.");
-        String ip = entity.getIp();
+    public static BoardListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
+        String[] ips = boardEntity.getIp().split("\\.");
+        String ip = boardEntity.getIp();
         if(ips.length > 1){
             ip = ips[0] + "." + ips[1];
         }
 
         return new BoardListRecord(
-                entity.getId(),
-                entity.getAnimation().getId(),
-                entity.getTitle(),
-                entity.getHit(),
-                entity.getWriteDate(),
-                entity.getModifyDate(),
+                boardEntity.getId(),
+                boardEntity.getAnimation().getId(),
+                boardEntity.getTitle(),
+                boardEntity.getHit(),
+                boardEntity.getWriteDate(),
+                boardEntity.getModifyDate(),
                 ip,
-                entity.getUserId(),
-                entity.getContent(),
-                Hibernate.size(entity.getLike())
+                boardEntity.getUserId(),
+                boardEntity.getContent(),
+                new BoardLikeRecord(
+                        boardEntity.getLike().size(),
+                        boardEntity.getLike().contains(likeEntity)
+                )
         );
     }
 }

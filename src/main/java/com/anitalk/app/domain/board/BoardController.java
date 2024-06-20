@@ -22,14 +22,24 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping
-    public ResponseEntity<PageAnd<BoardListRecord>> getBoards(@PathVariable Long animationId, Pagination pagination){
-        PageAnd<BoardListRecord> boardRecords = boardService.getBoards(animationId, pagination);
+    public ResponseEntity<PageAnd<BoardListRecord>> getBoards(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            Pagination pagination){
+        Long userId = null;
+        if(user != null) userId = user.id();
+        PageAnd<BoardListRecord> boardRecords = boardService.getBoards(animationId, pagination, userId);
         return ResponseEntity.ok(boardRecords);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardRecord> getBoardById(@PathVariable Long animationId, @PathVariable Long id) {
-        BoardRecord boardRecord = boardService.getBoardById(animationId, id);
+    public ResponseEntity<BoardRecord> getBoardById(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long animationId,
+            @PathVariable Long id) {
+        Long userId = null;
+        if(user != null) userId = user.id();
+        BoardRecord boardRecord = boardService.getBoardById(animationId, id, userId);
         return ResponseEntity.ok(boardRecord);
     }
 
