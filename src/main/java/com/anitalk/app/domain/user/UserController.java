@@ -101,10 +101,22 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@AuthenticationPrincipal AuthenticateUserRecord userRecord) throws Exception {
-        if(userRecord == null) throw new Exception("로그인이 되어있지 않습니다.");
+    public ResponseEntity<?> logout(
+            @AuthenticationPrincipal AuthenticateUserRecord userRecord,
+            @CookieValue(name = "refreshToken") String refreshToken
+    ) throws Exception {
+        if(userRecord == null && refreshToken == null) throw new Exception("로그인이 되어있지 않습니다.");
 
-        userLoginService.logoutUser(userRecord.id());
+        Long userId;
+
+        if(userRecord == null){
+            Map<String, Object> claims = generator.getClaimsFromToken(refreshToken);
+            userId = Long.parseLong(claims.get("userId").toString());
+        } else {
+            userId = userRecord.id();
+        }
+
+        userLoginService.logoutUser(userId);
         return ResponseEntity.ok().build();
     }
 }
