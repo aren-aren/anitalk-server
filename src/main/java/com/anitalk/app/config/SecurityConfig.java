@@ -1,5 +1,6 @@
 package com.anitalk.app.config;
 
+import com.anitalk.app.domain.user.UserLoginService;
 import com.anitalk.app.security.JwtAuthenticateFilter;
 import com.anitalk.app.security.JwtGenerator;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +50,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticateFilter jwtAuthenticateFilter(JwtGenerator generator){
-        return new JwtAuthenticateFilter(generator);
+    public JwtAuthenticateFilter jwtAuthenticateFilter(JwtGenerator generator, UserLoginService userLoginService){
+        return new JwtAuthenticateFilter(generator, userLoginService);
     }
 }

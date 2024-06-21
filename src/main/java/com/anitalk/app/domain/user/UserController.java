@@ -85,20 +85,20 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<UserTokenRecord> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) throws Exception {
-        System.out.println("refreshToken = " + refreshToken);
-        if(generator.validateToken(refreshToken)){
-            Map<String, Object> claims = generator.getClaimsFromToken(refreshToken);
-
-            UserRecord userRecord = userLoginService.validateRefreshToken(Long.parseLong(claims.get("userId").toString()), refreshToken);
-
-            String token = generator.generateAccessToken(userRecord.id(), userRecord.email());
-            return ResponseEntity.ok(new UserTokenRecord(userRecord, new JwtToken("Bearer", token)));
-        }
-
-        throw new UserTokenException("refreshToken_expired");
-    }
+//    @PostMapping("/refresh")
+//    public ResponseEntity<UserTokenRecord> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) throws Exception {
+//        System.out.println("refreshToken = " + refreshToken);
+//        if(generator.validateToken(refreshToken)){
+//            Map<String, Object> claims = generator.getClaimsFromToken(refreshToken);
+//
+//            UserRecord userRecord = userLoginService.validateRefreshToken(Long.parseLong(claims.get("userId").toString()), refreshToken);
+//
+//            String token = generator.generateAccessToken(userRecord.id(), userRecord.email());
+//            return ResponseEntity.ok(new UserTokenRecord(userRecord, new JwtToken("Bearer", token)));
+//        }
+//
+//        throw new UserTokenException("refreshToken_expired");
+//    }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
