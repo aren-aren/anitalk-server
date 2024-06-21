@@ -4,4 +4,9 @@ public record JwtToken(
         String tokenType,
         String token
 ) {
+
+    @Override
+    public String toString() {
+        return token;
+    }
 }

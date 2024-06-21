@@ -2,6 +2,7 @@ package com.anitalk.app.domain.user;
 
 import com.anitalk.app.domain.user.dto.*;
 import com.anitalk.app.security.JwtGenerator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +12,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final UserLoginService userLoginService;
     private final JwtGenerator generator;
     private final AuthenticationManager authenticationManager;
 
@@ -32,12 +36,18 @@ public class UserController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticateUserRecord.email(), authenticateUserRecord.password()));
         AuthenticateUserRecord loginUser = ((LoginUser) authentication.getPrincipal()).getUserRecord();
-        String token = generator.generateToken(loginUser.id(), loginUser.email());
+        String token = generator.generateAccessToken(loginUser.id(), loginUser.email());
+        String refreshToken = generator.generateRefreshToken(loginUser.id(), loginUser.email());
 
-        return ResponseEntity.ok(new UserTokenRecord(
-                new UserRecord(loginUser.id(), loginUser.email(), loginUser.nickname()) ,
-                new JwtToken("Bearer", token)
-        ));
+        JwtToken jwtToken = userLoginService.setRefreshToken(loginUser.id(), refreshToken);
+
+
+        return ResponseEntity.ok()
+                .header("Set-Cookie", generator.generateRefreshCookie(jwtToken.toString()).toString())
+                .body(new UserTokenRecord(
+                        new UserRecord(loginUser.id(), loginUser.email(), loginUser.nickname()),
+                        new JwtToken("Bearer", token)
+                ));
     }
 
     @PutMapping("/users")
@@ -72,5 +82,20 @@ public class UserController {
 
         EmailDuplicationRecord result = userService.checkEmail(email);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<UserTokenRecord> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) throws Exception {
+        System.out.println("refreshToken = " + refreshToken);
+        if(generator.validateToken(refreshToken)){
+            Map<String, Object> claims = generator.getClaimsFromToken(refreshToken);
+
+            UserRecord userRecord = userLoginService.validateRefreshToken(Long.parseLong(claims.get("userId").toString()), refreshToken);
+
+            String token = generator.generateAccessToken(userRecord.id(), userRecord.email());
+            return ResponseEntity.ok(new UserTokenRecord(userRecord, new JwtToken("Bearer", token)));
+        }
+
+        throw new Exception("토큰이 만료되었습니다.");
     }
 }

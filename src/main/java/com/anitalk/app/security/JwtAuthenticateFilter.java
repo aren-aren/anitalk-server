@@ -3,6 +3,8 @@ package com.anitalk.app.security;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +29,23 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String token = getJWTFromRequest(request);
 
-        if (StringUtils.hasText(token) && jwtGenerator.validateToken(token)) {
-            Map<String, Object> claims = jwtGenerator.getClaimsFromToken(token);
+        if (StringUtils.hasText(token)) {
+            if(jwtGenerator.validateToken(token)){
+                Map<String, Object> claims = jwtGenerator.getClaimsFromToken(token);
 
-            AuthenticateUserRecord userRecord = getUserDetail(claims.get("userId").toString(), claims.get("email").toString());
+                AuthenticateUserRecord userRecord = getUserDetail(claims.get("userId").toString(), claims.get("email").toString());
 
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userRecord, null, null);
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(userRecord, null, null);
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } else {
+                response.setStatus(401);
+                ServletOutputStream outputStream = response.getOutputStream();
+                outputStream.print("accessToken expired");
+                outputStream.flush();
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);

@@ -1,11 +1,11 @@
 package com.anitalk.app.security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -17,14 +17,23 @@ import java.util.Map;
 @Slf4j
 public class JwtGenerator {
     private final Key key;
-    private final Long expireTime = 1000L * 60 * 60 * 24;
 
     public JwtGenerator(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(Long userId, String username){
+    public String generateRefreshToken(Long userId, String username){
+        Long expireTimeRefresh = 1000L * 60 * 60 * 24 * 7;
+        return generateToken(userId, username, expireTimeRefresh);
+    }
+
+    public String generateAccessToken(Long userId, String username){
+        Long expireTime = 1000L * 60 * 60;
+        return generateToken(userId, username, expireTime);
+    }
+
+    public String generateToken(Long userId, String username, Long expireTime){
         Date current = new Date();
         Date expire = new Date(current.getTime() + expireTime);
 
@@ -59,5 +68,14 @@ public class JwtGenerator {
             log.error("token not valid : {}", e.getMessage());
             return false;
         }
+    }
+
+    public ResponseCookie generateRefreshCookie(String refreshToken){
+        return ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .build();
     }
 }
