@@ -43,4 +43,9 @@ public class UserLoginService implements UserDetailsService {
 
         throw new UserTokenException("refreshToken_invalidate");
     }
+
+    public void logoutUser(Long id) {
+        RefreshTokenEntity refreshEntity = refreshTokenRepository.findById(id).orElseThrow();
+        refreshTokenRepository.delete(refreshEntity);
+    }
 }

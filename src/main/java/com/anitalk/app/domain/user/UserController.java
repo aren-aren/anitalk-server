@@ -99,4 +99,12 @@ public class UserController {
 
         throw new UserTokenException("refreshToken_expired");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal AuthenticateUserRecord userRecord) throws Exception {
+        if(userRecord == null) throw new Exception("로그인이 되어있지 않습니다.");
+
+        userLoginService.logoutUser(userRecord.id());
+        return ResponseEntity.ok().build();
+    }
 }
