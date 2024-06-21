@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.user;
 
 import com.anitalk.app.domain.user.dto.*;
+import com.anitalk.app.exception.UserTokenException;
 import com.anitalk.app.security.JwtGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,6 @@ public class UserController {
             return ResponseEntity.ok(new UserTokenRecord(userRecord, new JwtToken("Bearer", token)));
         }
 
-        throw new Exception("토큰이 만료되었습니다.");
+        throw new UserTokenException("refreshToken_expired");
     }
 }

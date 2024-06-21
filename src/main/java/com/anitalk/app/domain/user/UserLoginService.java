@@ -4,6 +4,7 @@ import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.domain.user.dto.JwtToken;
 import com.anitalk.app.domain.user.dto.LoginUser;
 import com.anitalk.app.domain.user.dto.UserRecord;
+import com.anitalk.app.exception.UserTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,6 +41,6 @@ public class UserLoginService implements UserDetailsService {
             return UserRecord.of(userRepository.findById(refreshTokenEntity.getId()).orElseThrow());
         }
 
-        throw new Exception("토큰이 유효하지 않습니다.");
+        throw new UserTokenException("refreshToken_invalidate");
     }
 }

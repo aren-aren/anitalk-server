@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ControllerExceptionHandler {
     private void printExceptionLog(Exception e){
-        e.printStackTrace();
         log.error("Exception : {} , message : {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
     }
 
@@ -21,6 +20,12 @@ public class ControllerExceptionHandler {
     public ResponseStatusException notFoundExceptionHandler(Exception e){
         printExceptionLog(e);
         return new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(UserTokenException.class)
+    public ResponseStatusException invalidateUserToken(Exception e){
+        printExceptionLog(e);
+        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

@@ -42,7 +42,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             } else {
                 response.setStatus(401);
                 ServletOutputStream outputStream = response.getOutputStream();
-                outputStream.print("accessToken expired");
+                outputStream.print("accessToken_expired");
                 outputStream.flush();
                 return;
             }
