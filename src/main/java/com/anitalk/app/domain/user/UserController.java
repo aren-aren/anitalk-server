@@ -85,7 +85,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<UserTokenRecord> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) throws Exception {
         System.out.println("refreshToken = " + refreshToken);
         if(generator.validateToken(refreshToken)){
