@@ -38,6 +38,7 @@ public class SecurityConfig {
 //                                .requestMatchers(HttpMethod.PUT).authenticated()
 //                                .requestMatchers(HttpMethod.DELETE).authenticated()
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/ws", "/send/**", "/ani/**").permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
