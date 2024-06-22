@@ -1,9 +1,7 @@
 package com.anitalk.app.domain.user;
 
 import com.anitalk.app.domain.user.dto.*;
-import com.anitalk.app.exception.UserTokenException;
 import com.anitalk.app.security.JwtGenerator;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -103,7 +101,7 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
             @AuthenticationPrincipal AuthenticateUserRecord userRecord,
-            @CookieValue(name = "refreshToken") String refreshToken
+            @CookieValue(name = "refreshToken", required = false) String refreshToken
     ) throws Exception {
         if(userRecord == null && refreshToken == null) throw new Exception("로그인이 되어있지 않습니다.");
 

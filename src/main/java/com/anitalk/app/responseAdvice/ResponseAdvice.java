@@ -1,7 +1,7 @@
 package com.anitalk.app.responseAdvice;
 
 import com.anitalk.app.commons.ResultResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import com.anitalk.app.domain.user.dto.UserTokenRecord;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.io.IOException;
-
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.anitalk.app")
 public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
@@ -30,8 +28,18 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             ServerHttpRequest request,
             ServerHttpResponse response) {
 
+        System.out.println("request.getURI() = " + request.getURI().getPath());
+
         try {
-            ResultResponse resultResponse = (ResultResponse) RequestContextHolder.getRequestAttributes().getAttribute("resultResponse", 0);
+            ResultResponse resultResponse
+                    = (ResultResponse) RequestContextHolder.getRequestAttributes().getAttribute("resultResponse", 0);
+
+            if(request.getURI().getPath().equals("/api/login")){
+                UserTokenRecord tokenRecord = (UserTokenRecord) body;
+                resultResponse.setResult("authenticate");
+                resultResponse.setAccessToken(tokenRecord.token().token());
+            }
+
             resultResponse.setData(body);
 
             return resultResponse;

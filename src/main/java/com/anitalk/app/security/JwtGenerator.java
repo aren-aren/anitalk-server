@@ -74,6 +74,7 @@ public class JwtGenerator {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
+                .maxAge(60*60*24*7)
                 .sameSite("None")
                 .path("/")
                 .build();
