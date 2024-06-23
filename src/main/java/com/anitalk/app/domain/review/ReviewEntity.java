@@ -25,6 +25,9 @@ public class ReviewEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "sum_rate", nullable = false)
+    private Long sumRate;
+
     @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private RateEntity rate;

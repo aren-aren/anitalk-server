@@ -2,11 +2,13 @@ package com.anitalk.app.domain.animation;
 
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
+import com.anitalk.app.domain.animation.dto.RankingOption;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.attach.AttachRepository;
 import com.anitalk.app.domain.user.UserEntity;
 import com.anitalk.app.domain.user.UserRepository;
+import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +34,7 @@ public class AnimationService {
     private String url;
     private final String CATEGORY = "animations";
 
-    public PageAnd<AnimationRecord> getAnimations(Pagination page){
+    public PageAnd<AnimationRecord> getAnimations(Pagination page) {
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
         Page<AnimationEntity> animations = animationRepository.findAll(pageable);
         return new PageAnd<>(getListWithThumbnail(animations));
@@ -47,7 +49,7 @@ public class AnimationService {
 
     public AnimationRecord addAnimations(AnimationRecord animationRecord) {
         AnimationEntity addedEntity = animationRepository.save(animationRecord.toEntity());
-        if(animationRecord.attach() != null){
+        if (animationRecord.attach() != null) {
             attachManager.connectAttaches("animations", addedEntity.getId(), animationRecord.attach());
         }
         return AnimationRecord.of(addedEntity, url);
@@ -59,14 +61,14 @@ public class AnimationService {
         entity.setId(id);
 
         AnimationEntity putAnimation = animationRepository.save(entity);
-        if(animationRecord.attach() != null){
+        if (animationRecord.attach() != null) {
             attachManager.PutConnectionAttaches("animations", putAnimation.getId(), animationRecord.attach());
         }
         return AnimationRecord.of(putAnimation, url);
     }
 
     public void favoriteAnimation(Long userId, Long animationId) {
-        if(favoriteRepository.findById(new FavoriteEntityId(userId, animationId)).isPresent()) return;
+        if (favoriteRepository.findById(new FavoriteEntityId(userId, animationId)).isPresent()) return;
 
         FavoriteEntity favoriteEntity = new FavoriteEntity();
         favoriteEntity.setId(new FavoriteEntityId(userId, animationId));
@@ -92,17 +94,27 @@ public class AnimationService {
     }
 
     private Page<AnimationRecord> getListWithThumbnail(Page<AnimationEntity> animations) {
-        if(animations.getSize() == 0) return animations.map(animation -> AnimationRecord.of(animation, null));
+        if (animations.getSize() == 0) return animations.map(animation -> AnimationRecord.of(animation, null));
 
         List<Long> ids = animations.map(AnimationEntity::getId).toList();
         Map<Long, AttachEntity> attaches =
                 attachRepository.findAllByCategoryAndParentIdIn(CATEGORY, ids).stream()
-                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity->attachEntity));
+                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity -> attachEntity));
 
         return animations.map(animation -> {
             AttachEntity attach = attaches.get(animation.getId());
             String thumbnailUrl = attach == null ? null : url + attach.getName();
             return AnimationRecord.of(animation, thumbnailUrl);
         });
+    }
+
+    public PageAnd<AnimationRecord> getAnimations(RankingOption rankingOption, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<AnimationEntity> animations = switch (rankingOption.rankBy()) {
+            case HOT -> animationRepository.findAllHotRanking(pageable, DateManager.getDate(-30));
+            case RATE -> animationRepository.findAllRateRanking(pageable);
+        };
+
+        return new PageAnd<>(getListWithThumbnail(animations));
     }
 }
