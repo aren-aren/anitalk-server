@@ -37,12 +37,16 @@ public class BoardService {
 
     public BoardRecord getBoardById(Long animationId, Long id, Long userId) {
         BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
+        entity.setHit(entity.getHit() + 1);
+        entity = boardRepository.save(entity);
 
         return BoardRecord.of(entity, new LikeEntity(userId, entity.getId()));
     }
 
     public BoardRecord getBoardById(Long boardId, Long userId) {
         BoardEntity entity = boardRepository.findByIdAndDeletedIsFalse(boardId).orElseThrow();
+        entity.setHit(entity.getHit() + 1);
+        entity = boardRepository.save(entity);
 
         return BoardRecord.of(entity, new LikeEntity(userId, entity.getId()));
     }
