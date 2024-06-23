@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.attach;
 
 import com.anitalk.app.domain.attach.dto.AttachRecord;
+import com.anitalk.app.utils.DateManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +39,7 @@ public class AttachManager {
                 .name(filename)
                 .parentId(parentId)
                 .originName(originName)
+                .uploadDate(DateManager.today())
                 .build();
 
         entity = attachRepository.save(entity);
@@ -53,6 +55,10 @@ public class AttachManager {
 
     public void deleteAttach(Long id) throws Exception {
         AttachEntity entity = attachRepository.findById(id).orElseThrow();
+        deleteAttach(entity);
+    }
+
+    public void deleteAttach(AttachEntity entity) throws Exception {
         attachUploader.deleteAttach(entity.getName());
         attachRepository.delete(entity);
     }
@@ -84,5 +90,14 @@ public class AttachManager {
         }
 
         attachRepository.saveAll(connectedEntities);
+    }
+
+    public void deleteNoParentAttach() throws Exception {
+        List<AttachEntity> noParentAttaches = attachRepository.findAllToDeleteScheduling("boards", DateManager.getDate(-7));
+        if (noParentAttaches.isEmpty()) return;
+
+        for (AttachEntity attach : noParentAttaches) {
+            deleteAttach(attach);
+        }
     }
 }

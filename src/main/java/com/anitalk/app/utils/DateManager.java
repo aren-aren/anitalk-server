@@ -15,4 +15,8 @@ public class DateManager {
     public static String nowDateTime(){
         return LocalDateTime.now().format(dateTimeFormatter);
     }
+
+    public static String getDate(long dates) {
+        return LocalDate.now().plusDays(dates).format(dateFormatter);
+    }
 }

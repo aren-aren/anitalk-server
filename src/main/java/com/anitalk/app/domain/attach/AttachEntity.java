@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.attach;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
@@ -28,4 +29,8 @@ public class AttachEntity implements Serializable {
 
     @Column(name = "parent_id", insertable = false, updatable = false)
     private Long parentId;
+
+    @Column(name = "upload_date", length = 20)
+    private String uploadDate;
+
 }
