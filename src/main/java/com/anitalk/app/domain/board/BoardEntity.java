@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,6 +63,12 @@ public class BoardEntity {
     @OneToMany
     @JoinColumn(name = "board_id")
     Set<LikeEntity> like;
+
+    public Set<LikeEntity> getLike() {
+        if(like == null) return new HashSet<>();
+
+        return like;
+    }
 
     @Builder
     public BoardEntity(Long animationId,

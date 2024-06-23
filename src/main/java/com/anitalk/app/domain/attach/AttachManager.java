@@ -64,7 +64,7 @@ public class AttachManager {
     }
 
     public void connectAttaches(String category, Long parentId, Set<String> attaches) {
-        List<AttachEntity> entities = attachRepository.findAllByNameIn(attaches);
+        List<AttachEntity> entities = attachRepository.findAllByIdIn(attaches);
 
         if(entities.size() != attaches.size()) throw new NoSuchElementException("첨부파일 등록 실패");
 

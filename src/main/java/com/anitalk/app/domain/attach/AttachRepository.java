@@ -22,4 +22,6 @@ public interface AttachRepository extends JpaRepository<AttachEntity, Long> {
 
     @Query("select distinct a from AttachEntity a where a.category = :category and a.parentId is null and a.uploadDate <= :deadline")
     List<AttachEntity> findAllToDeleteScheduling(String category, String deadline);
+
+    List<AttachEntity> findAllByIdIn(Set<String> attaches);
 }
