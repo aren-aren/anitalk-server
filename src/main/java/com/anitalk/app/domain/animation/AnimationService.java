@@ -4,6 +4,8 @@ import com.anitalk.app.domain.animation.dto.AnimationRecord;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.attach.AttachRepository;
+import com.anitalk.app.domain.user.UserEntity;
+import com.anitalk.app.domain.user.UserRepository;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AnimationService {
     private final AnimationRepository animationRepository;
+    private final FavoriteRepository favoriteRepository;
     private final AttachRepository attachRepository;
     private final AttachManager attachManager;
+    private final UserRepository userRepository;
 
     @Value("${aws.url}")
     private String url;
@@ -67,5 +71,25 @@ public class AnimationService {
             attachManager.PutConnectionAttaches("animations", putAnimation.getId(), animationRecord.attach());
         }
         return AnimationRecord.of(putAnimation, url);
+    }
+
+    public void favoriteAnimation(Long userId, Long animationId) {
+        if(favoriteRepository.findById(new FavoriteEntityId(userId, animationId)).isPresent()) return;
+
+        FavoriteEntity favoriteEntity = new FavoriteEntity();
+        favoriteEntity.setId(new FavoriteEntityId(userId, animationId));
+
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+        favoriteEntity.setUser(user);
+
+        AnimationEntity animation = animationRepository.findById(animationId).orElseThrow();
+        favoriteEntity.setAnimation(animation);
+
+        favoriteRepository.save(favoriteEntity);
+    }
+
+    public void notFavoriteAnimations(Long id, Long animationId) {
+        FavoriteEntity favoriteEntity = favoriteRepository.findById(new FavoriteEntityId(id, animationId)).orElseThrow();
+        favoriteRepository.delete(favoriteEntity);
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -57,4 +58,7 @@ public class AnimationEntity {
 
     @OneToMany(mappedBy = "animation")
     private List<BoardEntity> boards;
+
+    @OneToMany(mappedBy = "animation")
+    private Set<FavoriteEntity> favorites;
 }

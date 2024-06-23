@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.board;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.commons.StringResult;
 import com.anitalk.app.domain.board.dto.BoardAddRecord;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
@@ -118,7 +119,7 @@ public class BoardController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<String> likeBoard(
+    public ResponseEntity<StringResult> likeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             @PathVariable Long id ){
@@ -127,11 +128,11 @@ public class BoardController {
         }
 
         boardService.likeBoard(user.id(), id);
-        return ResponseEntity.ok("success");
+        return ResponseEntity.ok(new StringResult("success"));
     }
 
     @DeleteMapping("/{id}/like")
-    public ResponseEntity<String> unlikeBoard(
+    public ResponseEntity<StringResult> unlikeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             @PathVariable Long id ){
@@ -140,6 +141,6 @@ public class BoardController {
         }
 
         boardService.unLikeBoard(user.id(), id);
-        return ResponseEntity.ok("success");
+        return ResponseEntity.ok(new StringResult("success"));
     }
 }
