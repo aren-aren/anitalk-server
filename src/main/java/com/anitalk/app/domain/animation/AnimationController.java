@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -20,7 +22,7 @@ public class AnimationController {
 
     @GetMapping
     public ResponseEntity<PageAnd<AnimationRecord>> getAnimations(Pagination pagination){
-        PageAnd<AnimationRecord> animations = new PageAnd<>(animationService.getAnimations(pagination));
+        PageAnd<AnimationRecord> animations = animationService.getAnimations(pagination);
         return ResponseEntity.ok(animations);
     }
 
@@ -58,5 +60,11 @@ public class AnimationController {
     ){
         animationService.notFavoriteAnimations(user.id(), animationId);
         return ResponseEntity.ok(new StringResult("success"));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<PageAnd<AnimationRecord>> getFavorites(@AuthenticationPrincipal AuthenticateUserRecord user, Pagination pagination){
+        PageAnd<AnimationRecord> animationRecords = animationService.getFavorites(user.id(), pagination);
+        return ResponseEntity.ok(animationRecords);
     }
 }

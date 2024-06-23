@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.animation;
 
+import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
@@ -31,19 +32,10 @@ public class AnimationService {
     private String url;
     private final String CATEGORY = "animations";
 
-    public Page<AnimationRecord> getAnimations(Pagination page){
+    public PageAnd<AnimationRecord> getAnimations(Pagination page){
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
         Page<AnimationEntity> animations = animationRepository.findAll(pageable);
-        List<Long> ids = animations.map(AnimationEntity::getId).toList();
-        Map<Long, AttachEntity> attaches =
-                attachRepository.findAllByCategoryAndParentIdIn(CATEGORY, ids).stream()
-                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity->attachEntity));
-
-        return animations.map(animation -> {
-            AttachEntity attach = attaches.get(animation.getId());
-            String thumbnailUrl = attach == null ? null : url + attach.getName();
-            return AnimationRecord.of(animation, thumbnailUrl);
-        });
+        return new PageAnd<>(getListWithThumbnail(animations));
     }
 
     public AnimationRecord getAnimations(Long id) {
@@ -91,5 +83,26 @@ public class AnimationService {
     public void notFavoriteAnimations(Long id, Long animationId) {
         FavoriteEntity favoriteEntity = favoriteRepository.findById(new FavoriteEntityId(id, animationId)).orElseThrow();
         favoriteRepository.delete(favoriteEntity);
+    }
+
+    public PageAnd<AnimationRecord> getFavorites(Long userId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<AnimationEntity> animations = animationRepository.findAllByUserId(userId, pageable);
+        return new PageAnd<>(getListWithThumbnail(animations));
+    }
+
+    private Page<AnimationRecord> getListWithThumbnail(Page<AnimationEntity> animations) {
+        if(animations.getSize() == 0) return animations.map(animation -> AnimationRecord.of(animation, null));
+
+        List<Long> ids = animations.map(AnimationEntity::getId).toList();
+        Map<Long, AttachEntity> attaches =
+                attachRepository.findAllByCategoryAndParentIdIn(CATEGORY, ids).stream()
+                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity->attachEntity));
+
+        return animations.map(animation -> {
+            AttachEntity attach = attaches.get(animation.getId());
+            String thumbnailUrl = attach == null ? null : url + attach.getName();
+            return AnimationRecord.of(animation, thumbnailUrl);
+        });
     }
 }
