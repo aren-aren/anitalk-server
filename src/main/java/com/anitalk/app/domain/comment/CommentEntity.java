@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.comment;
 
+import com.anitalk.app.domain.board.BoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +19,9 @@ public class CommentEntity {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "board_id", nullable = false)
-    private Long boardId;
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    BoardEntity board;
 
     @Column(name = "content", nullable = false, length = 100)
     private String content;
@@ -47,4 +49,5 @@ public class CommentEntity {
 
     @Column(name = "step")
     private Long step;
+
 }

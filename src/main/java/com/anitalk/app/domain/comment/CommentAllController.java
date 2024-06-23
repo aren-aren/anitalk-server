@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.domain.comment.dto.CommentBoardRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ public class CommentAllController {
     private final CommentService commentService;
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<PageAnd<CommentRecord>> getBoardsByUserId(@PathVariable Long userId, Pagination pagination){
-        PageAnd<CommentRecord> boardListRecord = commentService.getCommentsByUserId(userId, pagination);
+    public ResponseEntity<PageAnd<CommentBoardRecord>> getBoardsByUserId(@PathVariable Long userId, Pagination pagination){
+        PageAnd<CommentBoardRecord> boardListRecord = commentService.getCommentsByUserId(userId, pagination);
         return ResponseEntity.ok(boardListRecord);
     }
 }

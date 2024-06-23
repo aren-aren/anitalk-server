@@ -19,7 +19,7 @@ public record CommentRecord(
         return new CommentRecord(
                 entity.getId(),
                 entity.getUserId(),
-                entity.getBoardId(),
+                entity.getBoard().getId(),
                 entity.getContent(),
                 entity.getWriteDate(),
                 entity.getNickname(),

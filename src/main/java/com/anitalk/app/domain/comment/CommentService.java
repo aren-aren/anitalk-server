@@ -1,7 +1,10 @@
 package com.anitalk.app.domain.comment;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.domain.board.BoardEntity;
+import com.anitalk.app.domain.board.BoardRepository;
 import com.anitalk.app.domain.comment.dto.CommentAddRecord;
+import com.anitalk.app.domain.comment.dto.CommentBoardRecord;
 import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
 import com.anitalk.app.utils.DateManager;
@@ -18,11 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class CommentService {
-    private final CommentRepository repository;
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
 
     public PageAnd<CommentRecord> getComments(Long boardId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-        Page<CommentEntity> comments = repository.findAllByBoardIdOrderByRefIdDescStepAsc(boardId, pageable);
+        Page<CommentEntity> comments = commentRepository.findAllByBoardIdOrderByRefIdDescStepAsc(boardId, pageable);
         return new PageAnd<>(comments.map(CommentRecord::of));
     }
 
@@ -34,36 +38,38 @@ public class CommentService {
         }
 
         CommentEntity entity = commentAddRecord.toEntity();
-        entity.setBoardId(boardId);
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow();
+
+        entity.setBoard(board);
         entity.setWriteDate(DateManager.nowDateTime());
         entity.setIsDeleted(false);
 
-        entity = repository.save(entity);
+        entity = commentRepository.save(entity);
 
         if(entity.getRefId() == null){
             entity.setRefId(entity.getId());
-            repository.save(entity);
+            commentRepository.save(entity);
         }
 
         return CommentRecord.of(entity);
     }
 
     public CommentRecord putComment(CommentPutRecord commentAddRecord) {
-        CommentEntity entity = repository.findById(commentAddRecord.id()).orElseThrow();
+        CommentEntity entity = commentRepository.findById(commentAddRecord.id()).orElseThrow();
         entity.setContent(commentAddRecord.content());
 
-        entity = repository.save(entity);
+        entity = commentRepository.save(entity);
         return CommentRecord.of(entity);
     }
 
     private CommentAddRecord updateCommentsStep(CommentAddRecord comment) {
-        CommentEntity parentComment = repository.findById(comment.parent()).orElseThrow();
+        CommentEntity parentComment = commentRepository.findById(comment.parent()).orElseThrow();
 
         Long refId = parentComment.getRefId();
         Long step = parentComment.getStep() + 1;
         Long depth = parentComment.getDepth() + 1;
 
-        repository.updateComments(refId, step);
+        commentRepository.updateComments(refId, step);
 
         return new CommentAddRecord(
                 comment.userId(),
@@ -76,10 +82,10 @@ public class CommentService {
         );
     }
 
-    public PageAnd<CommentRecord> getCommentsByUserId(Long userId, Pagination pagination) {
+    public PageAnd<CommentBoardRecord> getCommentsByUserId(Long userId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-        Page<CommentEntity> commentEntities = repository.findAllByUserId(userId, pageable);
+        Page<CommentEntity> commentEntities = commentRepository.findAllByUserIdOrderByWriteDateDesc(userId, pageable);
 
-        return new PageAnd<>(commentEntities.map(CommentRecord::of));
+        return new PageAnd<>(commentEntities.map(CommentBoardRecord::of));
     }
 }
