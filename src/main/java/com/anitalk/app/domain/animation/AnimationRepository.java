@@ -12,9 +12,13 @@ import org.springframework.stereotype.Repository;
 public interface AnimationRepository extends JpaRepository<AnimationEntity, Long> {
     AnimationEntity findByName(String name);
 
-    @Query(
-            value = "select distinct ani from AnimationEntity ani join fetch FavoriteEntity fav on ani.id = fav.animation.id where fav.user.id = :userId"
-    )
+    @Query("""
+        select distinct ani
+        from AnimationEntity ani
+            join fetch FavoriteEntity fav on ani.id = fav.animation.id
+        where fav.user.id = :userId
+        order by ani.currentDate desc
+    """)
     Page<AnimationEntity> findAllByUserId(Long userId, Pageable pageable);
 
     @Query("""
