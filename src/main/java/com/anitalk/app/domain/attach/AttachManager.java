@@ -54,6 +54,7 @@ public class AttachManager {
     public void deleteAttach(Long id) throws Exception {
         AttachEntity entity = attachRepository.findById(id).orElseThrow();
         attachUploader.deleteAttach(entity.getName());
+        attachRepository.delete(entity);
     }
 
     public void connectAttaches(String category, Long parentId, Set<String> attaches) {

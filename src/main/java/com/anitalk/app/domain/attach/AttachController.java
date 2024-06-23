@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.attach;
 
+import com.anitalk.app.commons.StringResult;
 import com.anitalk.app.domain.attach.dto.AttachRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +27,11 @@ public class AttachController {
     ) throws Exception {
         AttachRecord attachRecord = attachManager.uploadAttach(category, parentId, attach);
         return ResponseEntity.ok(attachRecord);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StringResult> deleteAttach(@PathVariable Long id) throws Exception {
+        attachManager.deleteAttach(id);
+        return ResponseEntity.ok(new StringResult("deleted"));
     }
 }
