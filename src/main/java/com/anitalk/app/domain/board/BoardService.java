@@ -5,6 +5,7 @@ import com.anitalk.app.domain.animation.AnimationEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.board.dto.*;
 import com.anitalk.app.domain.user.UserEntity;
+import com.anitalk.app.domain.user.UserRepository;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
     private final AttachManager attachManager;
+    private final UserRepository userRepository;
 
     public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
@@ -78,22 +80,25 @@ public class BoardService {
         return BoardRecord.of(entity, new LikeEntity(entity.getUserId(), entity.getId()));
     }
 
-    public void likeBoard(Long userId, Long boardId) {
+    public BoardLikeRecord likeBoard(Long userId, Long boardId) {
         LikeEntity like = new LikeEntity(userId, boardId);
-        UserEntity user = new UserEntity();
-        user.setId(userId);
-        BoardEntity board = new BoardEntity();
-        board.setId(boardId);
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow();
 
         like.setUser(user);
         like.setBoard(board);
         likeRepository.save(like);
+
+        return BoardLikeRecord.of(board, like);
     }
 
-    public void unLikeBoard(Long userId, Long boardId) {
+    public BoardLikeRecord unLikeBoard(Long userId, Long boardId) {
         LikeEntityId likeId = new LikeEntityId(userId, boardId);
         LikeEntity like = likeRepository.findById(likeId).orElseThrow();
         likeRepository.delete(like);
+
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow();
+        return BoardLikeRecord.of(board, like);
     }
 
     public PageAnd<BoardAnimationNameListRecord> getBoardsByUserId(Long userId, Pagination pagination) {

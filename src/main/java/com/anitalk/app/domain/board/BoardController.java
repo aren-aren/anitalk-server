@@ -2,10 +2,7 @@ package com.anitalk.app.domain.board;
 
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.commons.StringResult;
-import com.anitalk.app.domain.board.dto.BoardAddRecord;
-import com.anitalk.app.domain.board.dto.BoardListRecord;
-import com.anitalk.app.domain.board.dto.BoardRecord;
-import com.anitalk.app.domain.board.dto.BoardWriterRecord;
+import com.anitalk.app.domain.board.dto.*;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.utils.Pagination;
 import jakarta.servlet.http.HttpServletRequest;
@@ -119,7 +116,7 @@ public class BoardController {
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<StringResult> likeBoard(
+    public ResponseEntity<BoardLikeRecord> likeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             @PathVariable Long id ){
@@ -127,12 +124,12 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
 
-        boardService.likeBoard(user.id(), id);
-        return ResponseEntity.ok(new StringResult("success"));
+        BoardLikeRecord boardLikeRecord = boardService.likeBoard(user.id(), id);
+        return ResponseEntity.ok(boardLikeRecord);
     }
 
     @DeleteMapping("/{id}/like")
-    public ResponseEntity<StringResult> unlikeBoard(
+    public ResponseEntity<BoardLikeRecord> unlikeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             @PathVariable Long id ){
@@ -140,7 +137,7 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
 
-        boardService.unLikeBoard(user.id(), id);
-        return ResponseEntity.ok(new StringResult("success"));
+        BoardLikeRecord boardLikeRecord = boardService.unLikeBoard(user.id(), id);
+        return ResponseEntity.ok(boardLikeRecord);
     }
 }

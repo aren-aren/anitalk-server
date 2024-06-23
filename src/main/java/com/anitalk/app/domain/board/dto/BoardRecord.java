@@ -20,6 +20,7 @@ public record BoardRecord(
         String password,
         Long userId,
         String category,
+        String animationName,
         BoardLikeRecord like
 ) {
     public BoardRecord{
@@ -46,6 +47,7 @@ public record BoardRecord(
                 boardEntity.getPassword(),
                 boardEntity.getUserId(),
                 boardEntity.getCategory().toString(),
+                boardEntity.getAnimation().getName(),
                 new BoardLikeRecord(
                         boardEntity.getLike().size(),
                         boardEntity.getLike().contains(likeEntity)
