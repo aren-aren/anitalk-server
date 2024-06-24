@@ -120,4 +120,10 @@ public class CommentService {
     public CommentBoardRecord getCommentBoardRecordById(Long id) {
         return CommentBoardRecord.of(commentRepository.findById(id).orElseThrow());
     }
+
+    public void deleteComment(Long userId, Long commentId) {
+        CommentEntity comment = commentRepository.findById(commentId).orElseThrow();
+        comment.setIsDeleted(true);
+        commentRepository.save(comment);
+    }
 }

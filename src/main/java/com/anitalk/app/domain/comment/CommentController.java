@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.commons.StringResult;
 import com.anitalk.app.domain.comment.dto.CommentAddRecord;
 import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
@@ -51,5 +52,16 @@ public class CommentController {
 
         CommentRecord comment = commentService.putComment(commentRecord);
         return ResponseEntity.ok(comment);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StringResult> deleteComment(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long boardId,
+            @PathVariable Long id ) throws Exception {
+        if(user == null) throw new Exception("로그인이 필요합니다.");
+
+        commentService.deleteComment(user.id(), id);
+        return ResponseEntity.ok(new StringResult("deleted : " + id));
     }
 }

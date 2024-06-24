@@ -102,7 +102,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/{id}/anonymous")
-    public ResponseEntity<String> deleteBoard(
+    public ResponseEntity<StringResult> deleteBoard(
             @RequestBody BoardWriterRecord boardWriterRecord,
             @PathVariable Long animationId,
             @PathVariable Long id
@@ -112,7 +112,7 @@ public class BoardController {
         }
 
         boardService.deleteBoard(id, animationId, boardWriterRecord);
-        return ResponseEntity.ok("deleted : " + id);
+        return ResponseEntity.ok(new StringResult("deleted : " + id));
     }
 
     @PostMapping("/{id}/like")
