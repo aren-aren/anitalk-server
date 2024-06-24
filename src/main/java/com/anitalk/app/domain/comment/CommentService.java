@@ -10,6 +10,7 @@ import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
 import com.anitalk.app.domain.notification.NoticeSender;
 import com.anitalk.app.domain.notification.NoticeType;
+import com.anitalk.app.domain.user.dto.UsernameRecord;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +56,11 @@ public class CommentService {
             entity = commentRepository.save(entity);
         }
 
+        if(board.getUserId() == null) return CommentRecord.of(entity);
+
         if(entity.getRefId().equals(entity.getId())){
             noticeSender.sendNotice(
-                    entity.getUserId(),
+                    new UsernameRecord(entity.getId(), entity.getNickname()),
                     board.getUserId(),
                     NoticeType.BOARD,
                     BoardListRecord.of(board, null),
@@ -65,8 +68,10 @@ public class CommentService {
             );
         } else {
             CommentEntity parentEntity = commentRepository.findById(entity.getRefId()).get();
+            if(parentEntity.getUserId() == null) return CommentRecord.of(entity);
+
             noticeSender.sendNotice(
-                    entity.getUserId(),
+                    new UsernameRecord(entity.getId(), entity.getNickname()),
                     parentEntity.getUserId(),
                     NoticeType.COMMENT,
                     CommentBoardRecord.of(parentEntity),

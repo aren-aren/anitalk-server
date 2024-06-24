@@ -16,11 +16,10 @@ public class NoticeSender {
     private final SimpMessagingTemplate template;
     private final UserService userService;
 
-    public void sendNotice(Long from, Long to, NoticeType type, NoticeContent target, NoticeContent content){
-        System.out.println(from + " ::: " + to);
+    public void sendNotice(UsernameRecord from, Long to, NoticeType type, NoticeContent target, NoticeContent content){
         try {
-            UsernameRecord user = getUserRecord(from);
-            template.convertAndSend("/noti/" + to, new NoticeRecord(user, target, content, type, DateManager.nowDateTime()));
+            if(from.id() != null) from = getUserRecord(from.id());
+            template.convertAndSend("/noti/" + to, new NoticeRecord(from, target, content, type, DateManager.nowDateTime()));
         } catch (Exception e){
             e.printStackTrace();
             log.error("알림 보내기 실패");
