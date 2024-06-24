@@ -5,17 +5,16 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
 @Data
 @Table(name = "board")
 @NoArgsConstructor
+@SQLRestriction("is_deleted=false")
 public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +59,7 @@ public class BoardEntity {
     @Enumerated(EnumType.ORDINAL)
     private BoardCategory category;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true)
     @JoinColumn(name = "board_id")
     Set<LikeEntity> like;
 

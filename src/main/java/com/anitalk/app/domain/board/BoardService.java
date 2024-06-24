@@ -25,20 +25,20 @@ public class BoardService {
 
     public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardListRecord> boards = boardRepository.findAllByAnimationIdAndDeletedIsFalse(animationId, pageable)
+        Page<BoardListRecord> boards = boardRepository.findAllByAnimationId(animationId, pageable)
                 .map(board -> BoardListRecord.of(board, new LikeEntity(userId , board.getId())));
         return new PageAnd<>(boards);
     }
 
     public PageAnd<BoardAnimationNameListRecord> getBoards(Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardAnimationNameListRecord> boards = boardRepository.findAllByDeleted(false, pageable)
+        Page<BoardAnimationNameListRecord> boards = boardRepository.findAll(pageable)
                 .map(board -> BoardAnimationNameListRecord.of(board, new LikeEntity(userId, board.getId())));
         return new PageAnd<>(boards);
     }
 
     public BoardRecord getBoardById(Long animationId, Long id, Long userId) {
-        BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
+        BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
         entity.setHit(entity.getHit() + 1);
         entity = boardRepository.save(entity);
 
@@ -46,7 +46,7 @@ public class BoardService {
     }
 
     public BoardRecord getBoardById(Long boardId, Long userId) {
-        BoardEntity entity = boardRepository.findByIdAndDeletedIsFalse(boardId).orElseThrow();
+        BoardEntity entity = boardRepository.findById(boardId).orElseThrow();
         entity.setHit(entity.getHit() + 1);
         entity = boardRepository.save(entity);
 
@@ -73,7 +73,7 @@ public class BoardService {
     }
 
     public BoardRecord putBoard(Long id, Long animationId, BoardAddRecord record) {
-        BoardEntity entity = boardRepository.findByIdAndAnimationIdAndDeletedIsFalse(id, animationId).orElseThrow();
+        BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
         record.putEntity(entity);
 
         entity = boardRepository.save(entity);
@@ -103,21 +103,21 @@ public class BoardService {
 
     public PageAnd<BoardAnimationNameListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardAnimationNameListRecord> boardEntities = boardRepository.findAllByUserIdAndDeletedIsFalse(userId, pageable)
+        Page<BoardAnimationNameListRecord> boardEntities = boardRepository.findAllByUserId(userId, pageable)
                 .map(board -> BoardAnimationNameListRecord.of(board, new LikeEntity(userId, board.getId())));
 
         return new PageAnd<>(boardEntities);
     }
 
     public void deleteBoard(Long userId, Long animationId, Long boardId) {
-        BoardEntity board = boardRepository.findByUserIdAndAnimationIdAndIdAndDeletedIsFalse(userId, animationId, boardId).orElseThrow();
+        BoardEntity board = boardRepository.findByUserIdAndAnimationIdAndId(userId, animationId, boardId).orElseThrow();
         board.setDeleted(true);
         boardRepository.save(board);
     }
 
     public void deleteBoard(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord) {
         BoardEntity board =
-                boardRepository.findByNicknameAndPasswordAndAnimationIdAndIdAndDeletedIsFalse(
+                boardRepository.findByNicknameAndPasswordAndAnimationIdAndId(
                     boardWriterRecord.nickname(),
                     boardWriterRecord.password(),
                     animationId,
@@ -125,9 +125,5 @@ public class BoardService {
                 .orElseThrow();
         board.setDeleted(true);
         boardRepository.save(board);
-    }
-
-    public BoardListRecord getBoardListRecordById(Long id) {
-        return BoardListRecord.of(boardRepository.findById(id).orElseThrow(), null);
     }
 }

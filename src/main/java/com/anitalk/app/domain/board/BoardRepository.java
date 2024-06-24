@@ -10,19 +10,15 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
-    Page<BoardEntity> findAllByAnimationIdAndDeletedIsFalse(Long animationId, Pageable pagination);
+    Page<BoardEntity> findAllByAnimationId(Long animationId, Pageable pagination);
 
-    Optional<BoardEntity> findByAnimationIdAndDeletedIsFalse(Long animationId);
+    Optional<BoardEntity> findByAnimationId(Long animationId);
 
-    Page<BoardEntity> findAllByUserIdAndDeletedIsFalse(Long userId, Pageable pageable);
+    Page<BoardEntity> findAllByUserId(Long userId, Pageable pageable);
 
-    Optional<BoardEntity> findByUserIdAndAnimationIdAndIdAndDeletedIsFalse(Long userId, Long animationId, Long id);
+    Optional<BoardEntity> findByUserIdAndAnimationIdAndId(Long userId, Long animationId, Long id);
 
-    Page<BoardEntity> findAllByDeleted(Boolean deleted, Pageable pageable);
+    Optional<BoardEntity> findByNicknameAndPasswordAndAnimationIdAndId(String nickname, String password, Long animationId, Long boardId);
 
-    Optional<BoardEntity> findByNicknameAndPasswordAndAnimationIdAndIdAndDeletedIsFalse(String nickname, String password, Long animationId, Long boardId);
-
-    Optional<BoardEntity> findByIdAndAnimationIdAndDeletedIsFalse(Long id, Long animationId);
-
-    Optional<BoardEntity> findByIdAndDeletedIsFalse(Long boardId);
+    Optional<BoardEntity> findByIdAndAnimationId(Long id, Long animationId);
 }

@@ -3,6 +3,7 @@ package com.anitalk.app.domain.comment;
 import com.anitalk.app.domain.board.BoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 @Data
 @Entity
@@ -10,6 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLRestriction("is_deleted=false")
 public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
