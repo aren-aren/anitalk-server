@@ -127,4 +127,7 @@ public class BoardService {
         boardRepository.save(board);
     }
 
+    public BoardListRecord getBoardListRecordById(Long id) {
+        return BoardListRecord.of(boardRepository.findById(id).orElseThrow(), null);
+    }
 }

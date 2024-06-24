@@ -3,10 +3,13 @@ package com.anitalk.app.domain.comment;
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.BoardRepository;
+import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.comment.dto.CommentAddRecord;
 import com.anitalk.app.domain.comment.dto.CommentBoardRecord;
 import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
+import com.anitalk.app.domain.notification.NoticeSender;
+import com.anitalk.app.domain.notification.NoticeType;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final NoticeSender noticeSender;
 
     public PageAnd<CommentRecord> getComments(Long boardId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
@@ -48,7 +52,26 @@ public class CommentService {
 
         if(entity.getRefId() == null){
             entity.setRefId(entity.getId());
-            commentRepository.save(entity);
+            entity = commentRepository.save(entity);
+        }
+
+        if(entity.getRefId().equals(entity.getId())){
+            noticeSender.sendNotice(
+                    entity.getUserId(),
+                    board.getUserId(),
+                    NoticeType.BOARD,
+                    BoardListRecord.of(board, null),
+                    CommentBoardRecord.of(entity)
+            );
+        } else {
+            CommentEntity parentEntity = commentRepository.findById(entity.getRefId()).get();
+            noticeSender.sendNotice(
+                    entity.getUserId(),
+                    parentEntity.getUserId(),
+                    NoticeType.COMMENT,
+                    CommentBoardRecord.of(parentEntity),
+                    CommentBoardRecord.of(entity)
+            );
         }
 
         return CommentRecord.of(entity);
@@ -87,5 +110,9 @@ public class CommentService {
         Page<CommentEntity> commentEntities = commentRepository.findAllByUserIdOrderByWriteDateDesc(userId, pageable);
 
         return new PageAnd<>(commentEntities.map(CommentBoardRecord::of));
+    }
+
+    public CommentBoardRecord getCommentBoardRecordById(Long id) {
+        return CommentBoardRecord.of(commentRepository.findById(id).orElseThrow());
     }
 }

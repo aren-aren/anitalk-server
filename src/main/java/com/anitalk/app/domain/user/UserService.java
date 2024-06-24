@@ -3,6 +3,7 @@ package com.anitalk.app.domain.user;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.domain.user.dto.EmailDuplicationRecord;
 import com.anitalk.app.domain.user.dto.UserRecord;
+import com.anitalk.app.domain.user.dto.UsernameRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,5 +45,9 @@ public class UserService {
     public boolean emailValidate(String email){
         String regex = "^\\w([-_.]?\\w)*@\\w([-_.]?\\w)*.[a-zA-Z]+$";
         return email.matches(regex);
+    }
+
+    public UsernameRecord getUserById(Long id) {
+        return UsernameRecord.of(repository.findById(id).orElseThrow());
     }
 }

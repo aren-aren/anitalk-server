@@ -2,8 +2,7 @@ package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
-import com.anitalk.app.domain.board.LikeEntityId;
-import org.hibernate.Hibernate;
+import com.anitalk.app.domain.notification.NoticeContent;
 
 public record BoardListRecord(
         Long id,
@@ -16,7 +15,7 @@ public record BoardListRecord(
         Long userId,
         String category,
         BoardLikeRecord like
-) {
+) implements NoticeContent {
     public static BoardListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
         String[] ips = boardEntity.getIp().split("\\.");
         String ip = boardEntity.getIp();
@@ -30,8 +29,8 @@ public record BoardListRecord(
                 boardEntity.getTitle(),
                 boardEntity.getHit(),
                 boardEntity.getWriteDate(),
-                boardEntity.getModifyDate(),
                 ip,
+                boardEntity.getNickname(),
                 boardEntity.getUserId(),
                 boardEntity.getContent(),
                 new BoardLikeRecord(

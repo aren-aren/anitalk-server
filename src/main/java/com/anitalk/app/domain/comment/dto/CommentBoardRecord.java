@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment.dto;
 
 import com.anitalk.app.domain.comment.CommentEntity;
+import com.anitalk.app.domain.notification.NoticeContent;
 
 public record CommentBoardRecord(
         Long animationId,
@@ -10,7 +11,7 @@ public record CommentBoardRecord(
         String boardTitle,
         String content,
         String date
-) {
+) implements NoticeContent {
 
     public static CommentBoardRecord of(CommentEntity comment){
         return new CommentBoardRecord(
