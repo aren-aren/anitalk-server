@@ -111,8 +111,7 @@ public class BoardService {
 
     public void deleteBoard(Long userId, Long animationId, Long boardId) {
         BoardEntity board = boardRepository.findByUserIdAndAnimationIdAndId(userId, animationId, boardId).orElseThrow();
-        board.setDeleted(true);
-        boardRepository.save(board);
+        boardRepository.delete(board);
     }
 
     public void deleteBoard(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord) {

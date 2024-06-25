@@ -123,7 +123,6 @@ public class CommentService {
 
     public void deleteComment(Long userId, Long commentId) {
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow();
-        comment.setIsDeleted(true);
-        commentRepository.save(comment);
+        commentRepository.delete(comment);
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Table(name = "board")
 @NoArgsConstructor
 @SQLRestriction("is_deleted=false")
+@SQLDelete(sql="update board set is_deleted = true where id = ?")
 public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
