@@ -125,4 +125,13 @@ public class BoardService {
         board.setDeleted(true);
         boardRepository.save(board);
     }
+
+    public PageAnd<BoardListRecord> getRecommendedBoards(Long animationId, Pagination pagination, Long userId) {
+        Long recommendedCount = 9L;
+
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
+        Page<BoardListRecord> boards = boardRepository.findAllRecommended(animationId, pageable, recommendedCount)
+                .map(board -> BoardListRecord.of(board, new LikeEntity(userId , board.getId())));
+        return new PageAnd<>(boards);
+    }
 }

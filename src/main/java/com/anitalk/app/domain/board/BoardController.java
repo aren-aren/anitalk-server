@@ -23,10 +23,16 @@ public class BoardController {
     public ResponseEntity<PageAnd<BoardListRecord>> getBoards(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
-            Pagination pagination){
+            BoardOption option,
+            Pagination pagination) {
         Long userId = null;
-        if(user != null) userId = user.id();
-        PageAnd<BoardListRecord> boardRecords = boardService.getBoards(animationId, pagination, userId);
+        if (user != null) userId = user.id();
+
+        PageAnd<BoardListRecord> boardRecords = switch (option.getType()){
+            case ALL -> boardService.getBoards(animationId, pagination, userId);
+            case RECOMMENDED -> boardService.getRecommendedBoards(animationId, pagination, userId);
+        };
+
         return ResponseEntity.ok(boardRecords);
     }
 
@@ -36,7 +42,7 @@ public class BoardController {
             @PathVariable Long animationId,
             @PathVariable Long id) {
         Long userId = null;
-        if(user != null) userId = user.id();
+        if (user != null) userId = user.id();
         BoardRecord boardRecord = boardService.getBoardById(animationId, id, userId);
         return ResponseEntity.ok(boardRecord);
     }
@@ -47,10 +53,10 @@ public class BoardController {
             @PathVariable Long animationId,
             @RequestBody BoardAddRecord boardAddRecord,
             HttpServletRequest request
-    ){
-        String ip = (String)request.getAttribute("ip");
+    ) {
+        String ip = (String) request.getAttribute("ip");
 
-        if(user != null) {
+        if (user != null) {
             boardAddRecord = new BoardAddRecord(
                     boardAddRecord.title(),
                     boardAddRecord.content(),
@@ -72,8 +78,8 @@ public class BoardController {
             @PathVariable Long animationId,
             @PathVariable Long id,
             @RequestBody BoardRecord record
-    ){
-        if(user == null) return ResponseEntity.badRequest().build();
+    ) {
+        if (user == null) return ResponseEntity.badRequest().build();
 
         BoardAddRecord boardAddRecord = new BoardAddRecord(
                 record.title(),
@@ -95,7 +101,7 @@ public class BoardController {
             @PathVariable Long animationId,
             @PathVariable Long id
     ) throws Exception {
-        if(user == null) throw new Exception("로그인이 필요합니다");
+        if (user == null) throw new Exception("로그인이 필요합니다");
 
         boardService.deleteBoard(user.id(), animationId, id);
         return ResponseEntity.ok("deleted : " + id);
@@ -107,7 +113,7 @@ public class BoardController {
             @PathVariable Long animationId,
             @PathVariable Long id
     ) throws Exception {
-        if(boardWriterRecord == null || !boardWriterRecord.validate()){
+        if (boardWriterRecord == null || !boardWriterRecord.validate()) {
             throw new Exception("게시글 작성자 정보가 유효하지 않습니다.");
         }
 
@@ -119,8 +125,8 @@ public class BoardController {
     public ResponseEntity<BoardLikeRecord> likeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
-            @PathVariable Long id ){
-        if(user == null){
+            @PathVariable Long id) {
+        if (user == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -132,8 +138,8 @@ public class BoardController {
     public ResponseEntity<BoardLikeRecord> unlikeBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
-            @PathVariable Long id ){
-        if(user == null){
+            @PathVariable Long id) {
+        if (user == null) {
             return ResponseEntity.badRequest().build();
         }
 
