@@ -61,7 +61,7 @@ public class BoardEntity {
     @Enumerated(EnumType.ORDINAL)
     private BoardCategory category;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany
     @JoinColumn(name = "board_id")
     Set<LikeEntity> like;
 
