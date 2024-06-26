@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.animation;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.domain.animation.dto.AnimationPutRecord;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
 import com.anitalk.app.domain.animation.dto.RankingOption;
 import com.anitalk.app.domain.attach.AttachEntity;
@@ -34,20 +35,21 @@ public class AnimationService {
     private String url;
     private final String CATEGORY = "animations";
 
-    public PageAnd<AnimationRecord> getAnimations(Pagination page) {
+    public PageAnd<AnimationRecord> getAnimations(Long userId, Pagination page) {
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
         Page<AnimationEntity> animations = animationRepository.findAll(pageable);
-        return new PageAnd<>(getListWithThumbnail(animations));
+
+        return new PageAnd<>(getListWithThumbnail(animations, userId));
     }
 
-    public AnimationRecord getAnimations(Long id) {
+    public AnimationRecord getAnimations(Long id, Long userId) {
         AnimationEntity animationEntity = animationRepository.findById(id).orElseThrow();
         AttachEntity attachEntity = attachRepository.findByCategoryAndParentId(CATEGORY, animationEntity.getId());
 
-        return AnimationRecord.of(animationEntity, url + attachEntity.getName());
+        return AnimationRecord.of(animationEntity, url + attachEntity.getName(), userId);
     }
 
-    public AnimationRecord addAnimations(AnimationRecord animationRecord) {
+    public AnimationRecord addAnimations(AnimationPutRecord animationRecord) {
         AnimationEntity addedEntity = animationRepository.save(animationRecord.toEntity());
         if (animationRecord.attach() != null) {
             attachManager.connectAttaches("animations", addedEntity.getId(), animationRecord.attach());
@@ -55,7 +57,7 @@ public class AnimationService {
         return AnimationRecord.of(addedEntity, url);
     }
 
-    public AnimationRecord putAnimations(Long id, AnimationRecord animationRecord) {
+    public AnimationRecord putAnimations(Long id, AnimationPutRecord animationRecord) {
         AnimationEntity entity = animationRepository.findById(id).orElseThrow();
         animationRecord.putEntity(entity);
         entity.setId(id);
@@ -90,11 +92,11 @@ public class AnimationService {
     public PageAnd<AnimationRecord> getFavorites(Long userId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         Page<AnimationEntity> animations = animationRepository.findAllByUserId(userId, pageable);
-        return new PageAnd<>(getListWithThumbnail(animations));
+        return new PageAnd<>(getListWithThumbnail(animations, userId));
     }
 
-    private Page<AnimationRecord> getListWithThumbnail(Page<AnimationEntity> animations) {
-        if (animations.getSize() == 0) return animations.map(animation -> AnimationRecord.of(animation, null));
+    private Page<AnimationRecord> getListWithThumbnail(Page<AnimationEntity> animations, Long userId) {
+        if (animations.getSize() == 0) return animations.map(animation -> AnimationRecord.of(animation, null, userId));
 
         List<Long> ids = animations.map(AnimationEntity::getId).toList();
         Map<Long, AttachEntity> attaches =
@@ -104,17 +106,17 @@ public class AnimationService {
         return animations.map(animation -> {
             AttachEntity attach = attaches.get(animation.getId());
             String thumbnailUrl = attach == null ? null : url + attach.getName();
-            return AnimationRecord.of(animation, thumbnailUrl);
+            return AnimationRecord.of(animation, thumbnailUrl, userId);
         });
     }
 
-    public PageAnd<AnimationRecord> getAnimations(RankingOption rankingOption, Pagination pagination) {
+    public PageAnd<AnimationRecord> getAnimations(RankingOption rankingOption, Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         Page<AnimationEntity> animations = switch (rankingOption.rankBy()) {
             case HOT -> animationRepository.findAllHotRanking(pageable, DateManager.getDate(-30));
             case RATE -> animationRepository.findAllRateRanking(pageable);
         };
 
-        return new PageAnd<>(getListWithThumbnail(animations));
+        return new PageAnd<>(getListWithThumbnail(animations, userId));
     }
 }

@@ -2,6 +2,7 @@ package com.anitalk.app.domain.animation;
 
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.commons.StringResult;
+import com.anitalk.app.domain.animation.dto.AnimationPutRecord;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
 import com.anitalk.app.domain.animation.dto.RankingOption;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
@@ -20,25 +21,35 @@ public class AnimationController {
     private final AnimationService animationService;
 
     @GetMapping
-    public ResponseEntity<PageAnd<AnimationRecord>> getAnimations(Pagination pagination){
-        PageAnd<AnimationRecord> animations = animationService.getAnimations(pagination);
+    public ResponseEntity<PageAnd<AnimationRecord>> getAnimations(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            Pagination pagination
+    ){
+        Long userId = null;
+        if(user != null) userId = user.id();
+
+        PageAnd<AnimationRecord> animations = animationService.getAnimations(userId, pagination);
         return ResponseEntity.ok(animations);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AnimationRecord> getAnimationsById(@PathVariable Long id){
-        AnimationRecord animation = animationService.getAnimations(id);
+    public ResponseEntity<AnimationRecord> getAnimationsById(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long id){
+        Long userId = null;
+        if(user != null) userId = user.id();
+        AnimationRecord animation = animationService.getAnimations(id, userId);
         return ResponseEntity.ok(animation);
     }
 
     @PostMapping
-    public ResponseEntity<AnimationRecord> addAnimations(@RequestBody AnimationRecord animationRecord){
+    public ResponseEntity<AnimationRecord> addAnimations(@RequestBody AnimationPutRecord animationRecord){
         AnimationRecord addedAnimation = animationService.addAnimations(animationRecord);
         return ResponseEntity.ok(addedAnimation);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AnimationRecord> putAnimations(@PathVariable Long id, @RequestBody AnimationRecord animationRecord){
+    public ResponseEntity<AnimationRecord> putAnimations(@PathVariable Long id, @RequestBody AnimationPutRecord animationRecord){
         AnimationRecord animations = animationService.putAnimations(id, animationRecord);
         return ResponseEntity.ok(animations);
     }
@@ -68,8 +79,13 @@ public class AnimationController {
     }
 
     @GetMapping("/ranking")
-    public ResponseEntity<PageAnd<AnimationRecord>> getAnimationsRanking(RankingOption rankingOption, Pagination pagination){
-        PageAnd<AnimationRecord> animationRecords = animationService.getAnimations(rankingOption, pagination);
+    public ResponseEntity<PageAnd<AnimationRecord>> getAnimationsRanking(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            RankingOption rankingOption,
+            Pagination pagination){
+        Long userId = null;
+        if(user != null) userId = user.id();
+        PageAnd<AnimationRecord> animationRecords = animationService.getAnimations(rankingOption, pagination, userId);
         return ResponseEntity.ok(animationRecords);
     }
 }
