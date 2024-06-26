@@ -21,43 +21,17 @@ public record AnimationRecord(
         FavoriteRecord favorite
 ) {
 
-    public static AnimationRecord of(AnimationEntity entity, String url){
-
-        return new AnimationRecord(
-                entity.getId(),
-                entity.getName(),
-                entity.getPlot(),
-                entity.getCondition(),
-                entity.getProductCompany(),
-                entity.getProducer(),
-                entity.getWriter(),
-                entity.getOriginWriter(),
-                entity.getSeason(),
-                entity.getOnDate(),
-                entity.getEpisode(),
-                entity.getStartDate(),
-                entity.getCurrentDate(),
-                url,
-                null
-        );
-    }
-
     public static AnimationRecord of(AnimationEntity entity, String url, Long userId){
-
-        FavoriteRecord favoriteRecord;
+        boolean isFavorite = false;
         if(userId != null){
-            favoriteRecord = new FavoriteRecord(
-                    userId,
-                    entity.getFavorites().size(),
-                    entity.getFavorites().contains(new FavoriteEntity(userId, entity.getId()))
-            );
-        } else {
-            favoriteRecord = new FavoriteRecord(
-                    null,
-                    entity.getFavorites().size(),
-                    false
-            );
+            isFavorite = entity.getFavorites().contains(new FavoriteEntity(userId, entity.getId()));
         }
+
+        FavoriteRecord favoriteRecord = new FavoriteRecord(
+                userId,
+                entity.getFavorites().size(),
+                isFavorite
+        );
 
         return new AnimationRecord(
                 entity.getId(),

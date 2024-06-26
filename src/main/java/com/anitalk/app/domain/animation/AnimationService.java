@@ -4,7 +4,6 @@ import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.animation.dto.AnimationPutRecord;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
 import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
-import com.anitalk.app.domain.animation.dto.RankingOption;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.attach.AttachRepository;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,16 +36,38 @@ public class AnimationService {
     private String url;
     private final String CATEGORY = "animations";
 
-    public PageAnd<AnimationRecord> getAnimations(Long userId, AnimationSearchRecord searchRecord, Pagination page) {
-        Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
-        Page<AnimationEntity> animations;
-        if(searchRecord.search() == null){
-            animations = animationRepository.findAll(pageable);
-        } else {
-            animations = animationRepository.findAllByNameContains(searchRecord.search(), pageable);
-        }
+    public PageAnd<AnimationRecord> getAnimations(AnimationSearchRecord searchRecord, Pagination pagination, Long userId) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Direction.DESC, "currentDate"));
+        Page<AnimationEntity> animations = switch (searchRecord.rankBy()) {
+            case HOT -> animationRepository.findAllHotRanking(pageable, DateManager.getDate(-30));
+            case RATE -> animationRepository.findAllRateRanking(pageable);
+            case ALL -> findAnimationBySearchRecord(searchRecord, pageable);
+        };
 
         return new PageAnd<>(getListWithThumbnail(animations, userId));
+    }
+
+    private Page<AnimationEntity> findAnimationBySearchRecord(AnimationSearchRecord searchRecord, Pageable pageable){
+        if(searchRecord.search() == null){
+            return animationRepository.findAll(pageable);
+        } else {
+            return animationRepository.findAllByNameContains(searchRecord.search(), pageable);
+        }
+    }
+
+    private Page<AnimationRecord> getListWithThumbnail(Page<AnimationEntity> animations, Long userId) {
+        if (animations.isEmpty()) return animations.map(animation -> AnimationRecord.of(animation, null, userId));
+
+        List<Long> ids = animations.map(AnimationEntity::getId).toList();
+        Map<Long, AttachEntity> attaches =
+                attachRepository.findAllByCategoryAndParentIdIn(CATEGORY, ids).stream()
+                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity -> attachEntity));
+
+        return animations.map(animation -> {
+            AttachEntity attach = attaches.get(animation.getId());
+            String thumbnailUrl = attach == null ? null : url + attach.getName();
+            return AnimationRecord.of(animation, thumbnailUrl, userId);
+        });
     }
 
     public AnimationRecord getAnimations(Long id, Long userId) {
@@ -55,13 +77,17 @@ public class AnimationService {
         return AnimationRecord.of(animationEntity, url + attachEntity.getName(), userId);
     }
 
+
+
     public AnimationRecord addAnimations(AnimationPutRecord animationRecord) {
         AnimationEntity addedEntity = animationRepository.save(animationRecord.toEntity());
         if (animationRecord.attach() != null) {
             attachManager.connectAttaches("animations", addedEntity.getId(), animationRecord.attach());
         }
-        return AnimationRecord.of(addedEntity, url);
+        return AnimationRecord.of(addedEntity, url, null);
     }
+
+
 
     public AnimationRecord putAnimations(Long id, AnimationPutRecord animationRecord) {
         AnimationEntity entity = animationRepository.findById(id).orElseThrow();
@@ -72,8 +98,10 @@ public class AnimationService {
         if (animationRecord.attach() != null) {
             attachManager.PutConnectionAttaches("animations", putAnimation.getId(), animationRecord.attach());
         }
-        return AnimationRecord.of(putAnimation, url);
+        return AnimationRecord.of(putAnimation, url, null);
     }
+
+
 
     public void favoriteAnimation(Long userId, Long animationId) {
         if (favoriteRepository.findById(new FavoriteEntityId(userId, animationId)).isPresent()) return;
@@ -101,28 +129,4 @@ public class AnimationService {
         return new PageAnd<>(getListWithThumbnail(animations, userId));
     }
 
-    private Page<AnimationRecord> getListWithThumbnail(Page<AnimationEntity> animations, Long userId) {
-        if (animations.getSize() == 0) return animations.map(animation -> AnimationRecord.of(animation, null, userId));
-
-        List<Long> ids = animations.map(AnimationEntity::getId).toList();
-        Map<Long, AttachEntity> attaches =
-                attachRepository.findAllByCategoryAndParentIdIn(CATEGORY, ids).stream()
-                        .collect(Collectors.toMap(AttachEntity::getParentId, attachEntity -> attachEntity));
-
-        return animations.map(animation -> {
-            AttachEntity attach = attaches.get(animation.getId());
-            String thumbnailUrl = attach == null ? null : url + attach.getName();
-            return AnimationRecord.of(animation, thumbnailUrl, userId);
-        });
-    }
-
-    public PageAnd<AnimationRecord> getAnimations(RankingOption rankingOption, Pagination pagination, Long userId) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-        Page<AnimationEntity> animations = switch (rankingOption.rankBy()) {
-            case HOT -> animationRepository.findAllHotRanking(pageable, DateManager.getDate(-30));
-            case RATE -> animationRepository.findAllRateRanking(pageable);
-        };
-
-        return new PageAnd<>(getListWithThumbnail(animations, userId));
-    }
 }

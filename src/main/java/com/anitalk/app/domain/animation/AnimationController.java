@@ -5,7 +5,6 @@ import com.anitalk.app.commons.StringResult;
 import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import com.anitalk.app.domain.animation.dto.AnimationPutRecord;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
-import com.anitalk.app.domain.animation.dto.RankingOption;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.utils.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AnimationController {
     private final AnimationService animationService;
 
-    @GetMapping
+    @GetMapping({"", "/ranking"})
     public ResponseEntity<PageAnd<AnimationRecord>> getAnimations(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             AnimationSearchRecord searchRecord,
@@ -30,7 +29,7 @@ public class AnimationController {
         Long userId = null;
         if(user != null) userId = user.id();
 
-        PageAnd<AnimationRecord> animations = animationService.getAnimations(userId, searchRecord, pagination);
+        PageAnd<AnimationRecord> animations = animationService.getAnimations(searchRecord, pagination, userId);
         return ResponseEntity.ok(animations);
     }
 
@@ -77,17 +76,6 @@ public class AnimationController {
     @GetMapping("/users")
     public ResponseEntity<PageAnd<AnimationRecord>> getFavorites(@AuthenticationPrincipal AuthenticateUserRecord user, Pagination pagination){
         PageAnd<AnimationRecord> animationRecords = animationService.getFavorites(user.id(), pagination);
-        return ResponseEntity.ok(animationRecords);
-    }
-
-    @GetMapping("/ranking")
-    public ResponseEntity<PageAnd<AnimationRecord>> getAnimationsRanking(
-            @AuthenticationPrincipal AuthenticateUserRecord user,
-            RankingOption rankingOption,
-            Pagination pagination){
-        Long userId = null;
-        if(user != null) userId = user.id();
-        PageAnd<AnimationRecord> animationRecords = animationService.getAnimations(rankingOption, pagination, userId);
         return ResponseEntity.ok(animationRecords);
     }
 }
