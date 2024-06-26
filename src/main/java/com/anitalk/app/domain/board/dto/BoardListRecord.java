@@ -23,6 +23,8 @@ public record BoardListRecord(
             ip = ips[0] + "." + ips[1];
         }
 
+        String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
+
         return new BoardListRecord(
                 boardEntity.getId(),
                 boardEntity.getAnimation().getId(),
@@ -30,8 +32,8 @@ public record BoardListRecord(
                 boardEntity.getHit(),
                 boardEntity.getWriteDate(),
                 ip,
-                boardEntity.getNickname(),
-                boardEntity.getUserId(),
+                nickname,
+                boardEntity.getUser().getId(),
                 boardEntity.getContent(),
                 new BoardLikeRecord(
                         boardEntity.getLike().size(),

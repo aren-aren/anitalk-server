@@ -56,12 +56,12 @@ public class CommentService {
             entity = commentRepository.save(entity);
         }
 
-        if(board.getUserId() == null) return CommentRecord.of(entity);
+        if(board.getUser() == null) return CommentRecord.of(entity);
 
         if(entity.getRefId().equals(entity.getId())){
             noticeSender.sendNotice(
-                    new UsernameRecord(entity.getId(), entity.getNickname()),
-                    board.getUserId(),
+                    new UsernameRecord(entity.getUserId(), entity.getNickname()),
+                    board.getUser().getId(),
                     NoticeType.BOARD,
                     BoardListRecord.of(board, null),
                     CommentBoardRecord.of(entity)

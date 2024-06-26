@@ -2,8 +2,6 @@ package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
-import com.anitalk.app.domain.board.LikeEntityId;
-import org.hibernate.Hibernate;
 
 public record BoardAnimationNameListRecord(
         Long id,
@@ -19,6 +17,8 @@ public record BoardAnimationNameListRecord(
         BoardLikeRecord like
 ) {
     public static BoardAnimationNameListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
+        String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
+
         return new BoardAnimationNameListRecord(
                 boardEntity.getId(),
                 boardEntity.getAnimation().getId(),
@@ -27,8 +27,8 @@ public record BoardAnimationNameListRecord(
                 boardEntity.getHit(),
                 boardEntity.getWriteDate(),
                 boardEntity.getIp(),
-                boardEntity.getNickname(),
-                boardEntity.getUserId(),
+                nickname,
+                boardEntity.getUser().getId(),
                 boardEntity.getCategory().name(),
                 new BoardLikeRecord(
                         boardEntity.getLike().size(),

@@ -1,7 +1,9 @@
 package com.anitalk.app.domain.board;
 
 import com.anitalk.app.domain.animation.AnimationEntity;
+import com.anitalk.app.domain.user.UserEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.Set;
 @Data
 @Table(name = "board")
 @NoArgsConstructor
+@AllArgsConstructor
 @SQLRestriction("is_deleted=false")
 @SQLDelete(sql="update board set is_deleted = true where id = ?")
 public class BoardEntity {
@@ -54,8 +57,8 @@ public class BoardEntity {
     @Column
     private String password;
 
-    @Column
-    private Long userId;
+    @ManyToOne
+    UserEntity user;
 
     @Column
     @Enumerated(EnumType.ORDINAL)
@@ -69,6 +72,12 @@ public class BoardEntity {
         if(like == null) return new HashSet<>();
 
         return like;
+    }
+
+    public UserEntity getUser(){
+        if(user == null) return UserEntity.builder().build();
+
+        return user;
     }
 
     @Builder
@@ -87,7 +96,7 @@ public class BoardEntity {
         this.ip = ip;
         this.nickname = nickname;
         this.password = password;
-        this.userId = userId;
+        this.user = UserEntity.builder().id(userId).build();
         this.category = BoardCategory.valueOf(category);
     }
 }

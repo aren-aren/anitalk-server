@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.user;
 
 import com.anitalk.app.domain.animation.FavoriteEntity;
+import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,11 +30,15 @@ public class UserEntity {
 
     @OneToMany
     @JoinColumn(name = "user_id")
-    private List<LikeEntity> likes;
+    private Set<LikeEntity> likes;
 
     @OneToMany
     @JoinColumn(name = "user_id")
     private Set<FavoriteEntity> favorites;
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<BoardEntity> boards;
 
     @Builder
     public UserEntity(Long id, String email, String nickname, String password) {

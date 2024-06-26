@@ -69,7 +69,7 @@ public class BoardService {
             attachManager.connectAttaches("board", entity.getId(), board.attaches());
         }
 
-        return BoardRecord.of(entity, new LikeEntity(entity.getUserId(), entity.getId()));
+        return BoardRecord.of(entity, new LikeEntity(entity.getUser().getId(), entity.getId()));
     }
 
     public BoardRecord putBoard(Long id, Long animationId, BoardAddRecord record) {
@@ -77,7 +77,7 @@ public class BoardService {
         record.putEntity(entity);
 
         entity = boardRepository.save(entity);
-        return BoardRecord.of(entity, new LikeEntity(entity.getUserId(), entity.getId()));
+        return BoardRecord.of(entity, new LikeEntity(entity.getUser().getId(), entity.getId()));
     }
 
     public BoardLikeRecord likeBoard(Long userId, Long boardId) {
