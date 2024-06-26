@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.animation;
 
 
+import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -38,4 +39,6 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
         order by sum(rev.sumRate) desc, ani.currentDate desc
     """)
     Page<AnimationEntity> findAllRateRanking(Pageable pageable);
+
+    Page<AnimationEntity> findAllByNameContains(String search, Pageable pageable);
 }

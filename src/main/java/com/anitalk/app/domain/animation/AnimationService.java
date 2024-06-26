@@ -3,6 +3,7 @@ package com.anitalk.app.domain.animation;
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.animation.dto.AnimationPutRecord;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
+import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import com.anitalk.app.domain.animation.dto.RankingOption;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
@@ -35,9 +36,14 @@ public class AnimationService {
     private String url;
     private final String CATEGORY = "animations";
 
-    public PageAnd<AnimationRecord> getAnimations(Long userId, Pagination page) {
+    public PageAnd<AnimationRecord> getAnimations(Long userId, AnimationSearchRecord searchRecord, Pagination page) {
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize());
-        Page<AnimationEntity> animations = animationRepository.findAll(pageable);
+        Page<AnimationEntity> animations;
+        if(searchRecord.search() == null){
+            animations = animationRepository.findAll(pageable);
+        } else {
+            animations = animationRepository.findAllByNameContains(searchRecord.search(), pageable);
+        }
 
         return new PageAnd<>(getListWithThumbnail(animations, userId));
     }

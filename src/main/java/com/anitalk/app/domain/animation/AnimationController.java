@@ -2,6 +2,7 @@ package com.anitalk.app.domain.animation;
 
 import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.commons.StringResult;
+import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import com.anitalk.app.domain.animation.dto.AnimationPutRecord;
 import com.anitalk.app.domain.animation.dto.AnimationRecord;
 import com.anitalk.app.domain.animation.dto.RankingOption;
@@ -23,12 +24,13 @@ public class AnimationController {
     @GetMapping
     public ResponseEntity<PageAnd<AnimationRecord>> getAnimations(
             @AuthenticationPrincipal AuthenticateUserRecord user,
+            AnimationSearchRecord searchRecord,
             Pagination pagination
     ){
         Long userId = null;
         if(user != null) userId = user.id();
 
-        PageAnd<AnimationRecord> animations = animationService.getAnimations(userId, pagination);
+        PageAnd<AnimationRecord> animations = animationService.getAnimations(userId, searchRecord, pagination);
         return ResponseEntity.ok(animations);
     }
 
