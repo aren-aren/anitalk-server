@@ -30,14 +30,15 @@ public class CommentController {
     public ResponseEntity<CommentRecord> addComments(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long boardId,
-            @RequestBody CommentAddRecord commentAddRecord
+            @RequestBody CommentAddRecord commentAddRecord,
+            @RequestAttribute("ip") String ip
     ) throws Exception {
         if(user != null){
             commentAddRecord = CommentAddRecord.putUser(commentAddRecord, user.id());
         } else if(commentAddRecord.nickname() == null){
             throw new Exception("닉네임이 null입니다.");
         }
-        CommentRecord comment = commentService.addComment(boardId, commentAddRecord);
+        CommentRecord comment = commentService.addComment(boardId, commentAddRecord, ip);
         return ResponseEntity.ok(comment);
     }
 

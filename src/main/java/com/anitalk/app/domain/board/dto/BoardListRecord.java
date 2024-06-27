@@ -3,6 +3,7 @@ package com.anitalk.app.domain.board.dto;
 import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
 import com.anitalk.app.domain.notification.NoticeContent;
+import com.anitalk.app.utils.IpFormatter;
 
 public record BoardListRecord(
         Long id,
@@ -17,11 +18,7 @@ public record BoardListRecord(
         BoardLikeRecord like
 ) implements NoticeContent {
     public static BoardListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
-        String[] ips = boardEntity.getIp().split("\\.");
-        String ip = boardEntity.getIp();
-        if(ips.length > 1){
-            ip = ips[0] + "." + ips[1];
-        }
+        String ip = IpFormatter.format(boardEntity.getIp());
 
         String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
 

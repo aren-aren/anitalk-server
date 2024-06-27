@@ -5,6 +5,7 @@ import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
 import com.anitalk.app.domain.board.LikeEntityId;
 import com.anitalk.app.utils.DateManager;
+import com.anitalk.app.utils.IpFormatter;
 import org.hibernate.Hibernate;
 
 public record BoardRecord(
@@ -28,11 +29,7 @@ public record BoardRecord(
     }
 
     public static BoardRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
-        String[] ips = boardEntity.getIp().split("\\.");
-        String ip = boardEntity.getIp();
-        if(ips.length > 1){
-            ip = ips[0] + "." + ips[1];
-        }
+        String ip = IpFormatter.format(boardEntity.getIp());
 
         String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
 

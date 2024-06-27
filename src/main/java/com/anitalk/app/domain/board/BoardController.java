@@ -52,10 +52,8 @@ public class BoardController {
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             @RequestBody BoardAddRecord boardAddRecord,
-            HttpServletRequest request
+            @RequestAttribute("ip") String ip
     ) {
-        String ip = (String) request.getAttribute("ip");
-
         if (user != null) {
             boardAddRecord = new BoardAddRecord(
                     boardAddRecord.title(),

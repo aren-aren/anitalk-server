@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment.dto;
 
 import com.anitalk.app.domain.comment.CommentEntity;
+import com.anitalk.app.utils.IpFormatter;
 
 public record CommentRecord(
         Long id,
@@ -16,6 +17,8 @@ public record CommentRecord(
         Long step
 ) {
     public static CommentRecord of(CommentEntity entity){
+        String ip = IpFormatter.format(entity.getIp());
+
         return new CommentRecord(
                 entity.getId(),
                 entity.getUserId(),
@@ -24,7 +27,7 @@ public record CommentRecord(
                 entity.getWriteDate(),
                 entity.getNickname(),
                 entity.getPassword(),
-                entity.getIp(),
+                ip,
                 entity.getRefId(),
                 entity.getDepth(),
                 entity.getStep()

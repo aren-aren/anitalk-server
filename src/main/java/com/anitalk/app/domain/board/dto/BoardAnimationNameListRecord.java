@@ -2,6 +2,7 @@ package com.anitalk.app.domain.board.dto;
 
 import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
+import com.anitalk.app.utils.IpFormatter;
 
 public record BoardAnimationNameListRecord(
         Long id,
@@ -18,6 +19,7 @@ public record BoardAnimationNameListRecord(
 ) {
     public static BoardAnimationNameListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
         String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
+        String ip = IpFormatter.format(boardEntity.getIp());
 
         return new BoardAnimationNameListRecord(
                 boardEntity.getId(),
@@ -26,7 +28,7 @@ public record BoardAnimationNameListRecord(
                 boardEntity.getTitle(),
                 boardEntity.getHit(),
                 boardEntity.getWriteDate(),
-                boardEntity.getIp(),
+                ip,
                 nickname,
                 boardEntity.getUser().getId(),
                 boardEntity.getCategory().name(),

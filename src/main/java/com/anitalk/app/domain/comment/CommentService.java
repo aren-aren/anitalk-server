@@ -36,7 +36,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentRecord addComment(Long boardId, CommentAddRecord commentAddRecord) {
+    public CommentRecord addComment(Long boardId, CommentAddRecord commentAddRecord, String ip) {
         if(commentAddRecord.parent() != null){
             //대댓글이면 업데이트
             commentAddRecord = updateCommentsStep(commentAddRecord);
@@ -45,6 +45,7 @@ public class CommentService {
         CommentEntity entity = commentAddRecord.toEntity();
         BoardEntity board = boardRepository.findById(boardId).orElseThrow();
 
+        entity.setIp(ip);
         entity.setBoard(board);
         entity.setWriteDate(DateManager.nowDateTime());
         entity.setIsDeleted(false);

@@ -16,9 +16,9 @@ public record CommentAddRecord(
         if(depth == null) depth = 0L;
     }
 
-    public static CommentAddRecord putUser(CommentAddRecord record, Long id) {
+    public static CommentAddRecord putUser(CommentAddRecord record, Long userId) {
         return new CommentAddRecord(
-                id,
+                userId,
                 record.content(),
                 null,
                 null,
