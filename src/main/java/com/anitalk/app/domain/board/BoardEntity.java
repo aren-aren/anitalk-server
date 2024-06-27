@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.board;
 
 import com.anitalk.app.domain.animation.AnimationEntity;
+import com.anitalk.app.domain.comment.CommentEntity;
 import com.anitalk.app.domain.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -67,6 +69,10 @@ public class BoardEntity {
     @OneToMany
     @JoinColumn(name = "board_id")
     Set<LikeEntity> like;
+
+    @OneToMany
+    @JoinColumn(name = "board_id")
+    List<CommentEntity> comments;
 
     public Set<LikeEntity> getLike() {
         if(like == null) return new HashSet<>();

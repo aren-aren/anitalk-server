@@ -24,7 +24,6 @@ public class CommentEntity {
     private Long userId;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
     BoardEntity board;
 
     @Column(name = "content", nullable = false, length = 100)

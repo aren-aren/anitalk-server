@@ -16,6 +16,7 @@ public record BoardListRecord(
         String nickname,
         Long userId,
         String category,
+        Integer commentCount,
         BoardLikeRecord like
 ) implements NoticeContent {
     public static BoardListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
@@ -33,6 +34,7 @@ public record BoardListRecord(
                 nickname,
                 boardEntity.getUser().getId(),
                 boardEntity.getContent(),
+                boardEntity.getComments().size(),
                 new BoardLikeRecord(
                         boardEntity.getLike().size(),
                         boardEntity.getLike().contains(likeEntity)
