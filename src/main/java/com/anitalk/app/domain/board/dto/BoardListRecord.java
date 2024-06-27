@@ -8,6 +8,7 @@ import com.anitalk.app.utils.IpFormatter;
 public record BoardListRecord(
         Long id,
         Long animationId,
+        String animationName,
         String title,
         Long hit,
         String writeDate,
@@ -18,13 +19,13 @@ public record BoardListRecord(
         BoardLikeRecord like
 ) implements NoticeContent {
     public static BoardListRecord of(BoardEntity boardEntity, LikeEntity likeEntity){
-        String ip = IpFormatter.format(boardEntity.getIp());
-
         String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
+        String ip = IpFormatter.format(boardEntity.getIp());
 
         return new BoardListRecord(
                 boardEntity.getId(),
                 boardEntity.getAnimation().getId(),
+                boardEntity.getAnimation().getName(),
                 boardEntity.getTitle(),
                 boardEntity.getHit(),
                 boardEntity.getWriteDate(),

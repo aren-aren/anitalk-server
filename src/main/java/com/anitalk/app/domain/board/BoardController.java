@@ -5,7 +5,6 @@ import com.anitalk.app.commons.StringResult;
 import com.anitalk.app.domain.board.dto.*;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.utils.Pagination;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,8 @@ public class BoardController {
         Long userId = null;
         if (user != null) userId = user.id();
 
-        PageAnd<BoardListRecord> boardRecords = switch (option.getType()){
-            case ALL -> boardService.getBoards(animationId, pagination, userId);
+        PageAnd<BoardListRecord> boardRecords = switch (option.getType()) {
+            case ALL -> boardService.getBoardsByAnimationId(animationId, pagination, userId);
             case RECOMMENDED -> boardService.getRecommendedBoards(animationId, pagination, userId);
         };
 
@@ -43,7 +42,7 @@ public class BoardController {
             @PathVariable Long id) {
         Long userId = null;
         if (user != null) userId = user.id();
-        BoardRecord boardRecord = boardService.getBoardById(animationId, id, userId);
+        BoardRecord boardRecord = boardService.getBoardById(id, userId);
         return ResponseEntity.ok(boardRecord);
     }
 
@@ -60,7 +59,7 @@ public class BoardController {
                     boardAddRecord.content(),
                     null,
                     null,
-                    boardAddRecord.ip(),
+                    null,
                     user.id(),
                     boardAddRecord.category(),
                     boardAddRecord.attaches()
@@ -75,48 +74,44 @@ public class BoardController {
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             @PathVariable Long id,
-            @RequestBody BoardRecord record
-    ) {
-        if (user == null) return ResponseEntity.badRequest().build();
+            @RequestBody BoardAddRecord record
+    ) throws Exception {
+        if (user != null) {
+            record = new BoardAddRecord(
+                    record.title(),
+                    record.content(),
+                    record.nickname(),
+                    record.password(),
+                    null,
+                    user.id(),
+                    null,
+                    record.attaches()
+            );
+        }
 
-        BoardAddRecord boardAddRecord = new BoardAddRecord(
-                record.title(),
-                record.content(),
-                null,
-                null,
-                record.ip(),
-                user.id(),
-                null,
-                null
-        );
-        BoardRecord putBoard = boardService.putBoard(id, animationId, boardAddRecord);
+        BoardRecord putBoard = boardService.putBoard(id, animationId, record);
         return ResponseEntity.ok(putBoard);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping({"/{id}", "/{id}/anonymous"})
     public ResponseEntity<String> deleteBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
-            @PathVariable Long animationId,
-            @PathVariable Long id
-    ) throws Exception {
-        if (user == null) throw new Exception("로그인이 필요합니다");
-
-        boardService.deleteBoard(user.id(), animationId, id);
-        return ResponseEntity.ok("deleted : " + id);
-    }
-
-    @DeleteMapping("/{id}/anonymous")
-    public ResponseEntity<StringResult> deleteBoard(
             @RequestBody BoardWriterRecord boardWriterRecord,
             @PathVariable Long animationId,
             @PathVariable Long id
     ) throws Exception {
-        if (boardWriterRecord == null || !boardWriterRecord.validate()) {
-            throw new Exception("게시글 작성자 정보가 유효하지 않습니다.");
+        if(user != null){
+            boardWriterRecord = new BoardWriterRecord(
+                    user.id(),
+                    null,
+                    null
+            );
+        } else if (boardWriterRecord == null || !boardWriterRecord.validate()){
+            throw new Exception("작성자 정보가 잘못되었습니다.");
         }
 
-        boardService.deleteBoard(id, animationId, boardWriterRecord);
-        return ResponseEntity.ok(new StringResult("deleted : " + id));
+        boardService.deleteBoard(animationId, id, boardWriterRecord);
+        return ResponseEntity.ok("deleted : " + id);
     }
 
     @PostMapping("/{id}/like")

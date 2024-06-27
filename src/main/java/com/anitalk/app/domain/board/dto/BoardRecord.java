@@ -3,10 +3,8 @@ package com.anitalk.app.domain.board.dto;
 import com.anitalk.app.domain.board.BoardCategory;
 import com.anitalk.app.domain.board.BoardEntity;
 import com.anitalk.app.domain.board.LikeEntity;
-import com.anitalk.app.domain.board.LikeEntityId;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.utils.IpFormatter;
-import org.hibernate.Hibernate;
 
 public record BoardRecord(
         Long id,

@@ -23,26 +23,18 @@ public class BoardService {
     private final AttachManager attachManager;
     private final UserRepository userRepository;
 
-    public PageAnd<BoardListRecord> getBoards(Long animationId, Pagination pagination, Long userId) {
+    public PageAnd<BoardListRecord> getBoardsByAnimationId(Long animationId, Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
         Page<BoardListRecord> boards = boardRepository.findAllByAnimationId(animationId, pageable)
                 .map(board -> BoardListRecord.of(board, new LikeEntity(userId , board.getId())));
         return new PageAnd<>(boards);
     }
 
-    public PageAnd<BoardAnimationNameListRecord> getBoards(Pagination pagination, Long userId) {
+    public PageAnd<BoardListRecord> getBoardsAll(Pagination pagination, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardAnimationNameListRecord> boards = boardRepository.findAll(pageable)
-                .map(board -> BoardAnimationNameListRecord.of(board, new LikeEntity(userId, board.getId())));
+        Page<BoardListRecord> boards = boardRepository.findAll(pageable)
+                .map(board -> BoardListRecord.of(board, new LikeEntity(userId, board.getId())));
         return new PageAnd<>(boards);
-    }
-
-    public BoardRecord getBoardById(Long animationId, Long id, Long userId) {
-        BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
-        entity.setHit(entity.getHit() + 1);
-        entity = boardRepository.save(entity);
-
-        return BoardRecord.of(entity, new LikeEntity(userId, entity.getId()));
     }
 
     public BoardRecord getBoardById(Long boardId, Long userId) {
@@ -51,6 +43,14 @@ public class BoardService {
         entity = boardRepository.save(entity);
 
         return BoardRecord.of(entity, new LikeEntity(userId, entity.getId()));
+    }
+
+    public PageAnd<BoardListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
+        Page<BoardListRecord> boardEntities = boardRepository.findAllByUserId(userId, pageable)
+                .map(board -> BoardListRecord.of(board, new LikeEntity(userId, board.getId())));
+
+        return new PageAnd<>(boardEntities);
     }
 
     public BoardRecord addBoard(Long animationId, BoardAddRecord board, String ip) {
@@ -73,11 +73,38 @@ public class BoardService {
     }
 
     public BoardRecord putBoard(Long id, Long animationId, BoardAddRecord record) {
-        BoardEntity entity = boardRepository.findByIdAndAnimationId(id, animationId).orElseThrow();
+        BoardEntity entity = getBoardByUser(id, animationId, new BoardWriterRecord(record.userId(), record.nickname(), record.password()));
+
         record.putEntity(entity);
+
+        if(!record.attaches().isEmpty()){
+            attachManager.PutConnectionAttaches("boards", entity.getId(), record.attaches());
+        }
 
         entity = boardRepository.save(entity);
         return BoardRecord.of(entity, new LikeEntity(entity.getUser().getId(), entity.getId()));
+    }
+
+    public void deleteBoard(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord) {
+        BoardEntity board = getBoardByUser(boardId, animationId, boardWriterRecord);
+        boardRepository.delete(board);
+    }
+
+    private BoardEntity getBoardByUser(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord){
+        if(boardWriterRecord.userId() == null){
+            return boardRepository.findByNicknameAndPasswordAndAnimationIdAndId(
+                            boardWriterRecord.nickname(),
+                            boardWriterRecord.password(),
+                            animationId,
+                            boardId)
+                    .orElseThrow();
+        } else {
+            return boardRepository.findByUserIdAndAnimationIdAndId(
+                            boardWriterRecord.userId(),
+                            animationId,
+                            boardId)
+                    .orElseThrow();
+        }
     }
 
     public BoardLikeRecord likeBoard(Long userId, Long boardId) {
@@ -99,31 +126,6 @@ public class BoardService {
 
         BoardEntity board = boardRepository.findById(boardId).orElseThrow();
         return BoardLikeRecord.of(board, like);
-    }
-
-    public PageAnd<BoardAnimationNameListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardAnimationNameListRecord> boardEntities = boardRepository.findAllByUserId(userId, pageable)
-                .map(board -> BoardAnimationNameListRecord.of(board, new LikeEntity(userId, board.getId())));
-
-        return new PageAnd<>(boardEntities);
-    }
-
-    public void deleteBoard(Long userId, Long animationId, Long boardId) {
-        BoardEntity board = boardRepository.findByUserIdAndAnimationIdAndId(userId, animationId, boardId).orElseThrow();
-        boardRepository.delete(board);
-    }
-
-    public void deleteBoard(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord) {
-        BoardEntity board =
-                boardRepository.findByNicknameAndPasswordAndAnimationIdAndId(
-                    boardWriterRecord.nickname(),
-                    boardWriterRecord.password(),
-                    animationId,
-                    boardId)
-                .orElseThrow();
-        board.setDeleted(true);
-        boardRepository.save(board);
     }
 
     public PageAnd<BoardListRecord> getRecommendedBoards(Long animationId, Pagination pagination, Long userId) {
