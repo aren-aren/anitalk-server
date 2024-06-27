@@ -12,7 +12,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLRestriction("is_deleted=false")
 @SQLDelete(sql="update comment set is_deleted = true where id = ?")
 public class CommentEntity {
     @Id

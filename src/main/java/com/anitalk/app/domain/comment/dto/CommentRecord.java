@@ -14,23 +14,29 @@ public record CommentRecord(
         String ip,
         Long refId,
         Long depth,
-        Long step
+        Long step,
+        String isDelete
 ) {
     public static CommentRecord of(CommentEntity entity){
         String ip = IpFormatter.format(entity.getIp());
+        String content = entity.getContent();
+        if(entity.getIsDeleted()){
+            content = "삭제된 댓글입니다.";
+        }
 
         return new CommentRecord(
                 entity.getId(),
                 entity.getUserId(),
                 entity.getBoard().getId(),
-                entity.getContent(),
+                content,
                 entity.getWriteDate(),
                 entity.getNickname(),
                 entity.getPassword(),
                 ip,
                 entity.getRefId(),
                 entity.getDepth(),
-                entity.getStep()
+                entity.getStep(),
+                entity.getIsDeleted().toString()
         );
     }
 }
