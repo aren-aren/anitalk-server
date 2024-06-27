@@ -23,18 +23,40 @@ public class BoardService {
     private final AttachManager attachManager;
     private final UserRepository userRepository;
 
-    public PageAnd<BoardListRecord> getBoardsByAnimationId(Long animationId, Pagination pagination, Long userId) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardListRecord> boards = boardRepository.findAllByAnimationId(animationId, pageable)
-                .map(board -> BoardListRecord.of(board, new LikeEntity(userId , board.getId())));
-        return new PageAnd<>(boards);
+    public PageAnd<BoardListRecord> getBoardsByAnimationId(Long animationId, Pagination pagination, BoardSearchRecord boardSearchRecord, Long userId) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Order.desc("writeDate")));
+        Page<BoardEntity> boards = switch (boardSearchRecord.kind()) {
+            case title ->
+                    boardRepository.findAllByAnimationIdAndTitleContains(animationId, boardSearchRecord.search(), pageable);
+            case content ->
+                    boardRepository.findAllByAnimationIdAndContentContains(animationId,  boardSearchRecord.search(), pageable);
+            case both ->
+                    boardRepository.findAllByAnimationIdAndTitleContainsOrContentContains(animationId, boardSearchRecord.search(), boardSearchRecord.search(), pageable);
+            case none -> boardRepository.findAllByAnimationId(animationId, pageable);
+        };
+
+
+        return new PageAnd<>(
+                boards.map(board -> BoardListRecord.of(board, new LikeEntity(userId, board.getId())))
+        );
     }
 
-    public PageAnd<BoardListRecord> getBoardsAll(Pagination pagination, Long userId) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardListRecord> boards = boardRepository.findAll(pageable)
-                .map(board -> BoardListRecord.of(board, new LikeEntity(userId, board.getId())));
-        return new PageAnd<>(boards);
+    public PageAnd<BoardListRecord> getBoardsAll(Pagination pagination, BoardSearchRecord boardSearchRecord, Long userId) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Order.desc("writeDate")));
+
+        Page<BoardEntity> boards = switch (boardSearchRecord.kind()) {
+            case title ->
+                    boardRepository.findAllByTitleContains(boardSearchRecord.search(), pageable);
+            case content ->
+                    boardRepository.findAllByContentContains(boardSearchRecord.search(), pageable);
+            case both ->
+                    boardRepository.findAllByTitleContainsOrContentContains(boardSearchRecord.search(), boardSearchRecord.search(), pageable);
+            case none -> boardRepository.findAll(pageable);
+        };
+
+        return new PageAnd<>(
+                boards.map(board -> BoardListRecord.of(board, new LikeEntity(userId, board.getId())))
+        );
     }
 
     public BoardRecord getBoardById(Long boardId, Long userId) {
@@ -46,7 +68,7 @@ public class BoardService {
     }
 
     public PageAnd<BoardListRecord> getBoardsByUserId(Long userId, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Order.desc("writeDate")));
         Page<BoardListRecord> boardEntities = boardRepository.findAllByUserId(userId, pageable)
                 .map(board -> BoardListRecord.of(board, new LikeEntity(userId, board.getId())));
 
@@ -65,7 +87,7 @@ public class BoardService {
 
         entity = boardRepository.save(entity);
 
-        if(board.attaches() != null){
+        if (board.attaches() != null) {
             attachManager.connectAttaches("board", entity.getId(), board.attaches());
         }
 
@@ -77,7 +99,7 @@ public class BoardService {
 
         record.putEntity(entity);
 
-        if(!record.attaches().isEmpty()){
+        if (!record.attaches().isEmpty()) {
             attachManager.PutConnectionAttaches("boards", entity.getId(), record.attaches());
         }
 
@@ -90,8 +112,8 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
-    private BoardEntity getBoardByUser(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord){
-        if(boardWriterRecord.userId() == null){
+    private BoardEntity getBoardByUser(Long boardId, Long animationId, BoardWriterRecord boardWriterRecord) {
+        if (boardWriterRecord.userId() == null) {
             return boardRepository.findByNicknameAndPasswordAndAnimationIdAndId(
                             boardWriterRecord.nickname(),
                             boardWriterRecord.password(),
@@ -128,12 +150,24 @@ public class BoardService {
         return BoardLikeRecord.of(board, like);
     }
 
-    public PageAnd<BoardListRecord> getRecommendedBoards(Long animationId, Pagination pagination, Long userId) {
+    public PageAnd<BoardListRecord> getRecommendedBoards(Long animationId, Pagination pagination, BoardSearchRecord boardSearchRecord, Long userId) {
         Long recommendedCount = 9L;
 
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(),Sort.by(Sort.Order.desc("writeDate")));
-        Page<BoardListRecord> boards = boardRepository.findAllRecommended(animationId, pageable, recommendedCount)
-                .map(board -> BoardListRecord.of(board, new LikeEntity(userId , board.getId())));
-        return new PageAnd<>(boards);
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Order.desc("writeDate")));
+        Page<BoardEntity> boards = switch (boardSearchRecord.kind()) {
+            case title ->
+                    boardRepository.findAllRecommendedSearchTitle(animationId, pageable, recommendedCount, boardSearchRecord.search());
+            case content ->
+                    boardRepository.findAllRecommendedSearchContent(animationId, pageable, recommendedCount, boardSearchRecord.search());
+            case both ->
+                    boardRepository.findAllRecommendedSearchBoth(animationId, pageable, recommendedCount, boardSearchRecord.search());
+            case none -> boardRepository.findAllRecommended(animationId, pageable, recommendedCount);
+        };
+
+        return new PageAnd<>(
+                boards.map(board ->
+                        BoardListRecord.of(board, new LikeEntity(userId, board.getId()))
+                )
+        );
     }
 }

@@ -23,13 +23,14 @@ public class BoardController {
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
             BoardOption option,
+            BoardSearchRecord boardSearchRecord,
             Pagination pagination) {
         Long userId = null;
         if (user != null) userId = user.id();
 
         PageAnd<BoardListRecord> boardRecords = switch (option.getType()) {
-            case ALL -> boardService.getBoardsByAnimationId(animationId, pagination, userId);
-            case RECOMMENDED -> boardService.getRecommendedBoards(animationId, pagination, userId);
+            case ALL -> boardService.getBoardsByAnimationId(animationId, pagination, boardSearchRecord, userId);
+            case RECOMMENDED -> boardService.getRecommendedBoards(animationId, pagination, boardSearchRecord, userId);
         };
 
         return ResponseEntity.ok(boardRecords);
@@ -93,7 +94,7 @@ public class BoardController {
         return ResponseEntity.ok(putBoard);
     }
 
-    @DeleteMapping({"/{id}", "/{id}/anonymous"})
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBoard(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @RequestBody BoardWriterRecord boardWriterRecord,

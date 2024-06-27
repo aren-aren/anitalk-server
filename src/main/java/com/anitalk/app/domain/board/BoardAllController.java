@@ -27,10 +27,11 @@ public class BoardAllController {
     @GetMapping
     public ResponseEntity<PageAnd<BoardListRecord>> getBoards(
             @AuthenticationPrincipal AuthenticateUserRecord user,
+            BoardSearchRecord boardSearchRecord,
             Pagination pagination){
         Long userId = null;
         if(user != null) userId = user.id();
-        PageAnd<BoardListRecord> boardListRecord = boardService.getBoardsAll(pagination, userId);
+        PageAnd<BoardListRecord> boardListRecord = boardService.getBoardsAll(pagination, boardSearchRecord, userId);
         return ResponseEntity.ok(boardListRecord);
     }
 
