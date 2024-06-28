@@ -1,7 +1,7 @@
 package com.anitalk.app.domain.review;
 
 import com.anitalk.app.domain.review.dto.ReviewRecord;
-import com.anitalk.app.utils.Pagination;
+import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

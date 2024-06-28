@@ -12,7 +12,7 @@ import com.anitalk.app.domain.notification.NoticeSender;
 import com.anitalk.app.domain.notification.NoticeType;
 import com.anitalk.app.domain.user.dto.UsernameRecord;
 import com.anitalk.app.utils.DateManager;
-import com.anitalk.app.utils.Pagination;
+import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

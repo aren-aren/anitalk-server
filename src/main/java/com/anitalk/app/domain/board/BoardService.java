@@ -7,7 +7,7 @@ import com.anitalk.app.domain.board.dto.*;
 import com.anitalk.app.domain.user.UserEntity;
 import com.anitalk.app.domain.user.UserRepository;
 import com.anitalk.app.utils.DateManager;
-import com.anitalk.app.utils.Pagination;
+import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

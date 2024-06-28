@@ -10,7 +10,7 @@ import com.anitalk.app.domain.attach.AttachRepository;
 import com.anitalk.app.domain.user.UserEntity;
 import com.anitalk.app.domain.user.UserRepository;
 import com.anitalk.app.utils.DateManager;
-import com.anitalk.app.utils.Pagination;
+import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

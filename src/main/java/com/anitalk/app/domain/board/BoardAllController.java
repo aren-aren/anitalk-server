@@ -4,7 +4,7 @@ import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.board.dto.BoardListRecord;
 import com.anitalk.app.domain.board.dto.BoardRecord;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
-import com.anitalk.app.utils.Pagination;
+import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

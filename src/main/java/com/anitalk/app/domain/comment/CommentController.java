@@ -6,7 +6,7 @@ import com.anitalk.app.domain.comment.dto.CommentAddRecord;
 import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
-import com.anitalk.app.utils.Pagination;
+import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

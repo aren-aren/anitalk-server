@@ -1,6 +1,5 @@
 package com.anitalk.app.domain.board;
 
-import com.anitalk.app.utils.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

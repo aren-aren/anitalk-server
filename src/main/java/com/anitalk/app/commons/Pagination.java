@@ -1,4 +1,4 @@
-package com.anitalk.app.utils;
+package com.anitalk.app.commons;
 
 import lombok.Data;
 
