@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/boards")
 @RequiredArgsConstructor
@@ -43,5 +45,11 @@ public class BoardAllController {
         if(user != null) userId = user.id();
         BoardRecord boardRecord = boardService.getBoardById(boardId, userId);
         return ResponseEntity.ok(boardRecord);
+    }
+
+    @GetMapping("/hot")
+    public ResponseEntity<List<BoardListRecord>> getHotBoards(){
+        List<BoardListRecord> boardListRecord = boardService.getHotBoards();
+        return ResponseEntity.ok(boardListRecord);
     }
 }

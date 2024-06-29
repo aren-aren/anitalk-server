@@ -41,4 +41,24 @@ public record BoardListRecord(
                 )
         );
     }
+
+    public static BoardListRecord of(BoardEntity boardEntity){
+        String nickname = boardEntity.getNickname() == null ? boardEntity.getUser().getNickname() : boardEntity.getNickname();
+        String ip = IpFormatter.format(boardEntity.getIp());
+
+        return new BoardListRecord(
+                boardEntity.getId(),
+                boardEntity.getAnimation().getId(),
+                boardEntity.getAnimation().getName(),
+                boardEntity.getTitle(),
+                boardEntity.getHit(),
+                boardEntity.getWriteDate(),
+                ip,
+                nickname,
+                boardEntity.getUser().getId(),
+                boardEntity.getContent(),
+                boardEntity.getComments().size(),
+                null
+        );
+    }
 }

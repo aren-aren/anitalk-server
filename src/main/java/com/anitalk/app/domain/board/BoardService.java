@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -22,6 +24,7 @@ public class BoardService {
     private final LikeRepository likeRepository;
     private final AttachManager attachManager;
     private final UserRepository userRepository;
+    private final BoardHotCalculator boardHotCalculator;
 
     public PageAnd<BoardListRecord> getBoardsByAnimationId(Long animationId, Pagination pagination, BoardSearchRecord boardSearchRecord, Long userId) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Order.desc("writeDate")));
@@ -138,7 +141,9 @@ public class BoardService {
         like.setBoard(board);
         likeRepository.save(like);
 
-        return BoardLikeRecord.of(board, like);
+        boardHotCalculator.likeUpdate(board.getId(), board.getWriteDate(), 1L);
+
+        return BoardLikeRecord.of(board, true);
     }
 
     public BoardLikeRecord unLikeBoard(Long userId, Long boardId) {
@@ -147,7 +152,9 @@ public class BoardService {
         likeRepository.delete(like);
 
         BoardEntity board = boardRepository.findById(boardId).orElseThrow();
-        return BoardLikeRecord.of(board, like);
+        boardHotCalculator.likeUpdate(board.getId(), board.getWriteDate(), -1L);
+
+        return BoardLikeRecord.of(board, false);
     }
 
     public PageAnd<BoardListRecord> getRecommendedBoards(Long animationId, Pagination pagination, BoardSearchRecord boardSearchRecord, Long userId) {
@@ -169,5 +176,13 @@ public class BoardService {
                         BoardListRecord.of(board, new LikeEntity(userId, board.getId()))
                 )
         );
+    }
+
+    public List<BoardListRecord> getHotBoards() {
+        List<Long> ids = boardHotCalculator.getHotBoards().stream().map(BoardHotDto::getId).toList();
+        List<BoardEntity> boards = boardRepository.findAllByIdIn(ids);
+
+
+        return boards.stream().map(BoardListRecord::of).toList();
     }
 }

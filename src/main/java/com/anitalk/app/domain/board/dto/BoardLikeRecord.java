@@ -13,4 +13,11 @@ public record BoardLikeRecord(
                 board.getLike().contains(like)
         );
     }
+
+    public static BoardLikeRecord of(BoardEntity board, boolean isLike) {
+        return new BoardLikeRecord(
+                board.getLike().size() + (isLike ? 1 : -1),
+                isLike
+        );
+    }
 }
