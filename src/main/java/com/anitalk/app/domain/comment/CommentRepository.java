@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
-    Page<CommentEntity> findAllByBoardIdOrderByRefIdDescStepAsc(Long boardId, Pageable pageable);
+    Page<CommentEntity> findAllByBoardIdOrderByRefIdAscStepAsc(Long boardId, Pageable pageable);
 
     @Modifying
     @Query("UPDATE CommentEntity SET step = step + 1 WHERE refId = :refId AND step >= :step")
