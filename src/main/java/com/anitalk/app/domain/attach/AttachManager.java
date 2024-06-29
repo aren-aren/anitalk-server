@@ -23,7 +23,7 @@ public class AttachManager {
             throw new Exception("파일이 비어있습니다.");
         }
 
-        if(category.equals("animations")){
+        if(category.equals("animations") && parentId != null){
             AttachEntity existEntity = attachRepository.findByParentId(parentId);
             if(existEntity != null){
                 throw new Exception("이미 존재하는 파일");
