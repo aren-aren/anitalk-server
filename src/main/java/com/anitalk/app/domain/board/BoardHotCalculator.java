@@ -36,11 +36,21 @@ public class BoardHotCalculator {
             heap.add(board);
         });
 
-        hotBoards.clear();
-        for (int i = 0; i < 10; i++) {
-            if(heap.isEmpty()) return;
+        synchronized (hotBoards){
+            hotBoards.clear();
+            BoardHotDto out;
 
-            hotBoards.add(heap.poll());
+            while(!heap.isEmpty()){
+                out = heap.poll();
+                if(hotBoards.size() < 11){
+                    hotBoards.add(out);
+                    continue;
+                }
+
+                if(out.getScore() == 0){
+                    boards.remove(out.getId());
+                }
+            }
         }
     }
 

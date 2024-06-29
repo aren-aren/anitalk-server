@@ -2,6 +2,7 @@ package com.anitalk.app.scheduler;
 
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.board.BoardHotCalculator;
+import com.anitalk.app.utils.DateManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,8 +28,9 @@ public class Scheduler {
     @Scheduled(cron = "*/10 * * * * ?")
     public void calcHotBoards(){
         try {
+            Long start = DateManager.getNowMilliseconds();
             boardHotCalculator.calcHotBoards();
-            //log.info("boardHotCalculatorScheduler run");
+            log.info("boardHotCalculatorScheduler run - time : {}ms", DateManager.getNowMilliseconds() - start);
         } catch ( Exception e ){
             e.printStackTrace();
         }
