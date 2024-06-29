@@ -14,7 +14,8 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     select distinct bor
     from BoardEntity bor
         join fetch bor.animation ani
-        join fetch bor.user
+        join fetch bor.user u
+    where ani.id = :animationId
     """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
     Page<BoardEntity> findAllByAnimationIdFetchJoin(Long animationId, Pageable pagination);
 
