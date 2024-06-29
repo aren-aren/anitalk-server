@@ -61,7 +61,7 @@ public class CommentService {
 
         if(entity.getRefId().equals(entity.getId())){
             noticeSender.sendNotice(
-                    new UsernameRecord(entity.getUserId(), entity.getNickname()),
+                    new UsernameRecord(entity.getUser().getId(), entity.getNickname()),
                     board.getUser().getId(),
                     NoticeType.BOARD,
                     BoardListRecord.of(board, null),
@@ -69,11 +69,11 @@ public class CommentService {
             );
         } else {
             CommentEntity parentEntity = commentRepository.findById(entity.getRefId()).get();
-            if(parentEntity.getUserId() == null) return CommentRecord.of(entity);
+            if(parentEntity.getUser().getId() == null) return CommentRecord.of(entity);
 
             noticeSender.sendNotice(
                     new UsernameRecord(entity.getId(), entity.getNickname()),
-                    parentEntity.getUserId(),
+                    parentEntity.getUser().getId(),
                     NoticeType.COMMENT,
                     CommentBoardRecord.of(parentEntity),
                     CommentBoardRecord.of(entity)

@@ -24,13 +24,18 @@ public record CommentRecord(
             content = "삭제된 댓글입니다.";
         }
 
+        String nickname = entity.getNickname();
+        if(nickname == null){
+            nickname = entity.getUser().getNickname();
+        }
+
         return new CommentRecord(
                 entity.getId(),
-                entity.getUserId(),
+                entity.getUser().getId(),
                 entity.getBoard().getId(),
                 content,
                 entity.getWriteDate(),
-                entity.getNickname(),
+                nickname,
                 entity.getPassword(),
                 ip,
                 entity.getRefId(),

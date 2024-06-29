@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment;
 
 import com.anitalk.app.domain.board.BoardEntity;
+import com.anitalk.app.domain.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -19,8 +20,8 @@ public class CommentEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    UserEntity user;
 
     @ManyToOne
     BoardEntity board;

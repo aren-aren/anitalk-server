@@ -18,7 +18,7 @@ public class Scheduler {
     public void attachDeleteScheduler(){
         try {
             attachManager.deleteNoParentAttach();
-            log.info("noParentAttachScheduler run");
+            //log.info("noParentAttachScheduler run");
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -28,7 +28,7 @@ public class Scheduler {
     public void calcHotBoards(){
         try {
             boardHotCalculator.calcHotBoards();
-            log.info("boardHotCalculatorScheduler run");
+            //log.info("boardHotCalculatorScheduler run");
         } catch ( Exception e ){
             e.printStackTrace();
         }

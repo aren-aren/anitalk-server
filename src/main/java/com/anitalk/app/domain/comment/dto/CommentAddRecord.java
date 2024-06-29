@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment.dto;
 
 import com.anitalk.app.domain.comment.CommentEntity;
+import com.anitalk.app.domain.user.UserEntity;
 
 public record CommentAddRecord(
         Long userId,
@@ -30,7 +31,7 @@ public record CommentAddRecord(
 
     public CommentEntity toEntity() {
         return CommentEntity.builder()
-                .userId(userId())
+                .user(UserEntity.builder().id(userId()).build())
                 .content(content())
                 .nickname(nickname())
                 .password(password())
