@@ -3,6 +3,7 @@ package com.anitalk.app.domain.animation;
 import com.anitalk.app.domain.board.BoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 import java.util.Set;
@@ -59,6 +60,7 @@ public class AnimationEntity {
     @OneToMany(mappedBy = "animation")
     private List<BoardEntity> boards;
 
-    @OneToMany(mappedBy = "animation")
+    @OneToMany(mappedBy = "animation", fetch = FetchType.EAGER)
+    @BatchSize(size = 100)
     private Set<FavoriteEntity> favorites;
 }
