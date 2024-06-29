@@ -24,4 +24,6 @@ public interface AttachRepository extends JpaRepository<AttachEntity, Long> {
     List<AttachEntity> findAllToDeleteScheduling(String category, String deadline);
 
     List<AttachEntity> findAllByIdIn(Set<String> attaches);
+
+    List<AttachEntity> findAllByCategoryAndParentIdOrIdIn(String category, Long parentId, Set<String> attaches);
 }

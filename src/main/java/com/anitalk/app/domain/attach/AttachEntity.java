@@ -27,7 +27,7 @@ public class AttachEntity implements Serializable {
     @Column(name = "origin_name", nullable = false, length = 50)
     private String originName;
 
-    @Column(name = "parent_id", insertable = false, updatable = false)
+    @Column(name = "parent_id")
     private Long parentId;
 
     @Column(name = "upload_date", length = 20)

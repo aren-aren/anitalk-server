@@ -92,7 +92,6 @@ public class AnimationService {
     public AnimationRecord putAnimations(Long id, AnimationPutRecord animationRecord) {
         AnimationEntity entity = animationRepository.findById(id).orElseThrow();
         animationRecord.putEntity(entity);
-        entity.setId(id);
 
         AnimationEntity putAnimation = animationRepository.save(entity);
         if (animationRecord.attach() != null) {

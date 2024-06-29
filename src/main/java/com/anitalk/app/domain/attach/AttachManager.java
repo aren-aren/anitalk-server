@@ -76,10 +76,10 @@ public class AttachManager {
     }
 
     public void PutConnectionAttaches(String category, Long parentId, Set<String> attaches) {
-        List<AttachEntity> connectedEntities = attachRepository.findAllByCategoryAndParentIdOrNameIn(category, parentId, attaches);
+        List<AttachEntity> connectedEntities = attachRepository.findAllByCategoryAndParentIdOrIdIn(category, parentId, attaches);
 
         for (AttachEntity entity : connectedEntities) {
-            if(!attaches.contains(entity.getName())){
+            if(!attaches.contains(entity.getId().toString())){
                 entity.setCategory(null);
                 entity.setParentId(null);
                 continue;
