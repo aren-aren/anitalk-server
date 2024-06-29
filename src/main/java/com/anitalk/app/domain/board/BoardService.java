@@ -27,12 +27,12 @@ public class BoardService {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Order.desc("writeDate")));
         Page<BoardEntity> boards = switch (boardSearchRecord.kind()) {
             case title ->
-                    boardRepository.findAllByAnimationIdAndTitleContains(animationId, boardSearchRecord.search(), pageable);
+                    boardRepository.findAllByAnimationIdAndTitleContainsFetchJoin(animationId, boardSearchRecord.search(), pageable);
             case content ->
-                    boardRepository.findAllByAnimationIdAndContentContains(animationId,  boardSearchRecord.search(), pageable);
+                    boardRepository.findAllByAnimationIdAndContentContainsFetchJoin(animationId,  boardSearchRecord.search(), pageable);
             case both ->
-                    boardRepository.findAllByAnimationIdAndTitleContainsOrContentContains(animationId, boardSearchRecord.search(), boardSearchRecord.search(), pageable);
-            case none -> boardRepository.findAllByAnimationId(animationId, pageable);
+                    boardRepository.findAllByAnimationIdAndBothContainsFetchJoin(animationId, boardSearchRecord.search(), pageable);
+            case none -> boardRepository.findAllByAnimationIdFetchJoin(animationId, pageable);
         };
 
 
@@ -46,12 +46,12 @@ public class BoardService {
 
         Page<BoardEntity> boards = switch (boardSearchRecord.kind()) {
             case title ->
-                    boardRepository.findAllByTitleContains(boardSearchRecord.search(), pageable);
+                    boardRepository.findAllByTitleContainsFetchJoin(boardSearchRecord.search(), pageable);
             case content ->
-                    boardRepository.findAllByContentContains(boardSearchRecord.search(), pageable);
+                    boardRepository.findAllByContentContainsFetchJoin(boardSearchRecord.search(), pageable);
             case both ->
-                    boardRepository.findAllByTitleContainsOrContentContains(boardSearchRecord.search(), boardSearchRecord.search(), pageable);
-            case none -> boardRepository.findAll(pageable);
+                    boardRepository.findAllByBothContainsFetchJoin(boardSearchRecord.search(), pageable);
+            case none -> boardRepository.findAllFetchJoin(pageable);
         };
 
         return new PageAnd<>(

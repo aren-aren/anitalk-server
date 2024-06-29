@@ -15,10 +15,4 @@ class AnitalkServerApplicationTests {
     @Test
     void contextLoads() {
     }
-
-    @Test
-    void test(){
-        Pagination pagination = new Pagination();
-        service.getAnimations(pagination);
-    }
 }

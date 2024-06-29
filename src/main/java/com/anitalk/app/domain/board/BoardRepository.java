@@ -10,7 +10,13 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
-    Page<BoardEntity> findAllByAnimationId(Long animationId, Pageable pagination);
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+        join fetch bor.user
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByAnimationIdFetchJoin(Long animationId, Pageable pagination);
 
     Page<BoardEntity> findAllByUserId(Long userId, Pageable pageable);
 
@@ -18,11 +24,35 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
     Optional<BoardEntity> findByNicknameAndPasswordAndAnimationIdAndId(String nickname, String password, Long animationId, Long boardId);
 
-    Page<BoardEntity> findAllByAnimationIdAndTitleContains(Long animationId, String title, Pageable pageable);
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+                join fetch bor.user
+    where ani.id = :animationId
+        and bor.title like concat('%',:title,'%')
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByAnimationIdAndTitleContainsFetchJoin(Long animationId, String title, Pageable pageable);
 
-    Page<BoardEntity> findAllByAnimationIdAndContentContains(Long animationId, String content, Pageable pageable);
+    @Query(value = """
+            select distinct bor
+            from BoardEntity bor
+                join fetch bor.animation ani
+                join fetch bor.user
+            where ani.id = :animationId
+                and bor.content like concat('%',:content,'%')
+            """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByAnimationIdAndContentContainsFetchJoin(Long animationId, String content, Pageable pageable);
 
-    Page<BoardEntity> findAllByAnimationIdAndTitleContainsOrContentContains(Long animationId, String title, String content, Pageable pageable);
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+        join fetch bor.user
+    where ani.id = :animationId
+        and (bor.content like concat('%',:search,'%') or bor.title like concat('%',:search,'%'))
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByAnimationIdAndBothContainsFetchJoin(Long animationId, String search, Pageable pageable);
 
     @Query("""
         select bor
@@ -67,9 +97,38 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     """)
     Page<BoardEntity> findAllRecommendedSearchBoth(Long animationId, Pageable pageable, Long recommendedCount, String search);
 
-    Page<BoardEntity> findAllByTitleContains(String search, Pageable pageable);
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+        join fetch bor.user
+    where bor.title like concat('%',:search,'%')
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByTitleContainsFetchJoin(String search, Pageable pageable);
 
-    Page<BoardEntity> findAllByContentContains(String search, Pageable pageable);
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+        join fetch bor.user
+    where bor.content like concat('%',:search,'%')
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByContentContainsFetchJoin(String search, Pageable pageable);
 
-    Page<BoardEntity> findAllByTitleContainsOrContentContains(String search, String search1, Pageable pageable);
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+        join fetch bor.user
+    where (bor.content like concat('%',:search,'%') or bor.title like concat('%',:search,'%'))
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllByBothContainsFetchJoin(String search, Pageable pageable);
+
+    @Query(value = """
+    select distinct bor
+    from BoardEntity bor
+        join fetch bor.animation ani
+        join fetch bor.user
+    """, countQuery = "select count(distinct bor.id) from BoardEntity bor")
+    Page<BoardEntity> findAllFetchJoin(Pageable pageable);
 }

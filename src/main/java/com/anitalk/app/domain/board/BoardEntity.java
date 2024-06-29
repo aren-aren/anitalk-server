@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -66,12 +67,14 @@ public class BoardEntity {
     @Enumerated(EnumType.ORDINAL)
     private BoardCategory category;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "board_id")
+    @BatchSize(size = 100)
     Set<LikeEntity> like;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "board_id")
+    @BatchSize(size = 100)
     List<CommentEntity> comments;
 
     public Set<LikeEntity> getLike() {
