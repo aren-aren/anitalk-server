@@ -23,15 +23,19 @@ public record AnimationRecord(
 
     public static AnimationRecord of(AnimationEntity entity, String url, Long userId){
         boolean isFavorite = false;
-        if(userId != null){
-            isFavorite = entity.getFavorites().contains(new FavoriteEntity(userId, entity.getId()));
-        }
+        FavoriteRecord favoriteRecord = null;
 
-        FavoriteRecord favoriteRecord = new FavoriteRecord(
-                userId,
-                entity.getFavorites().size(),
-                isFavorite
-        );
+        if(entity.getFavorites() != null){
+            if(userId != null){
+                isFavorite = entity.getFavorites().contains(new FavoriteEntity(userId, entity.getId()));
+            }
+
+            favoriteRecord = new FavoriteRecord(
+                    userId,
+                    entity.getFavorites().size(),
+                    isFavorite
+            );
+        }
 
         return new AnimationRecord(
                 entity.getId(),

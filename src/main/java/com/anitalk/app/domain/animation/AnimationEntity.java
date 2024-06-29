@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 public class AnimationEntity {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false, length = 50)

@@ -22,7 +22,6 @@ public record AnimationPutRecord(
 ) {
     public AnimationEntity toEntity() {
         return AnimationEntity.builder()
-                .id(id())
                 .name(name())
                 .plot(plot())
                 .condition(condition())
