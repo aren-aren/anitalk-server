@@ -106,20 +106,17 @@ public class CommentService {
         CommentEntity parentComment = commentRepository.findById(comment.parent()).orElseThrow();
         Optional<CommentEntity> parentNextComment =
                 commentRepository.findTopByBoardIdAndStepGreaterThanAndDepthOrderByWriteDate(parentComment.getBoard().getId(), parentComment.getStep(), parentComment.getDepth());
-        Long start = parentComment.getStep();
-        Long end = 100_000L;
+
+        Long end;
+
         if(parentNextComment.isPresent()){
             end = parentNextComment.get().getStep();
+        } else {
+            end = commentRepository.getLastStep(parentComment.getRefId(), parentComment.getStep() ,parentComment.getDepth()) + 1;
         }
-
-        Optional<CommentEntity> upperComment =
-                commentRepository.findTopByBoardIdAndRefIdAndDepthAndStepBetweenOrderByStepDesc(parentComment.getBoard().getId(), parentComment.getRefId(), parentComment.getDepth()+1, start, end);
 
         Long refId = parentComment.getRefId();
-        long step = parentComment.getStep() + 1;
-        if(upperComment.isPresent()){
-            step = upperComment.get().getStep() + 1;
-        }
+        long step = end - 1;
         Long depth = parentComment.getDepth() + 1;
 
         commentRepository.updateComments(refId, step);
