@@ -19,5 +19,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
     Page<CommentEntity> findAllByUserIdOrderByWriteDateDesc(Long userId, Pageable pageable);
 
-    Optional<CommentEntity> findTopByRefIdAndDepthOrderByStepDesc(Long refId, Long depth);
+    Optional<CommentEntity> findTopByBoardIdAndRefIdAndDepthAndStepBetweenOrderByStepDesc (Long boardId, Long refId, Long depth, Long step, Long step2);
+
+    Optional<CommentEntity> findTopByBoardIdAndStepGreaterThanAndDepthOrderByWriteDate(Long boardId, Long step, Long depth);
 }

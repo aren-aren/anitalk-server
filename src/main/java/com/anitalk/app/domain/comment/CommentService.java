@@ -104,7 +104,16 @@ public class CommentService {
 
     private CommentAddRecord updateCommentsStep(CommentAddRecord comment) {
         CommentEntity parentComment = commentRepository.findById(comment.parent()).orElseThrow();
-        Optional<CommentEntity> upperComment = commentRepository.findTopByRefIdAndDepthOrderByStepDesc(parentComment.getRefId(), parentComment.getDepth()+1);
+        Optional<CommentEntity> parentNextComment =
+                commentRepository.findTopByBoardIdAndStepGreaterThanAndDepthOrderByWriteDate(parentComment.getBoard().getId(), parentComment.getStep(), parentComment.getDepth());
+        Long start = parentComment.getStep();
+        Long end = 100_000L;
+        if(parentNextComment.isPresent()){
+            end = parentNextComment.get().getStep();
+        }
+
+        Optional<CommentEntity> upperComment =
+                commentRepository.findTopByBoardIdAndRefIdAndDepthAndStepBetweenOrderByStepDesc(parentComment.getBoard().getId(), parentComment.getRefId(), parentComment.getDepth()+1, start, end);
 
         Long refId = parentComment.getRefId();
         long step = parentComment.getStep() + 1;
