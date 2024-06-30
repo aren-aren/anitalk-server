@@ -107,7 +107,7 @@ public class CommentService {
         Optional<CommentEntity> upperComment = commentRepository.findTopByRefIdAndDepthOrderByStepDesc(parentComment.getRefId(), parentComment.getDepth()+1);
 
         Long refId = parentComment.getRefId();
-        Long step = 0L;
+        long step = parentComment.getStep() + 1;
         if(upperComment.isPresent()){
             step = upperComment.get().getStep() + 1;
         }
