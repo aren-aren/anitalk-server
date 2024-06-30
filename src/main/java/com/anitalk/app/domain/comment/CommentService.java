@@ -79,11 +79,11 @@ public class CommentService {
                     CommentBoardRecord.of(entity)
             );
         } else {
-            CommentEntity parentEntity = commentRepository.findById(entity.getRefId()).get();
+            CommentEntity parentEntity = commentRepository.findById(commentAddRecord.parent()).get();
             if(parentEntity.getUser().getId() == null) return CommentRecord.of(entity);
 
             noticeSender.sendNotice(
-                    new UsernameRecord(entity.getId(), entity.getNickname()),
+                    new UsernameRecord(entity.getUser().getId(), entity.getNickname()),
                     parentEntity.getUser().getId(),
                     NoticeType.COMMENT,
                     CommentBoardRecord.of(parentEntity),
