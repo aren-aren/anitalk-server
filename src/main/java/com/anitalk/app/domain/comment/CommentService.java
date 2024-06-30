@@ -10,6 +10,8 @@ import com.anitalk.app.domain.comment.dto.CommentPutRecord;
 import com.anitalk.app.domain.comment.dto.CommentRecord;
 import com.anitalk.app.domain.notification.NoticeSender;
 import com.anitalk.app.domain.notification.NoticeType;
+import com.anitalk.app.domain.user.UserEntity;
+import com.anitalk.app.domain.user.UserRepository;
 import com.anitalk.app.domain.user.dto.UsernameRecord;
 import com.anitalk.app.utils.DateManager;
 import com.anitalk.app.commons.Pagination;
@@ -21,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +32,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final NoticeSender noticeSender;
+    private final UserRepository userRepository;
 
     public PageAnd<CommentRecord> getComments(Long boardId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
@@ -41,8 +46,14 @@ public class CommentService {
             //대댓글이면 업데이트
             commentAddRecord = updateCommentsStep(commentAddRecord);
         }
+        CommentEntity entity;
+        if(commentAddRecord.userId() != null){
+            UserEntity user = userRepository.findById(commentAddRecord.userId()).orElseThrow();
+            entity = commentAddRecord.toEntity(user);
+        } else {
+            entity = commentAddRecord.toEntity();
+        }
 
-        CommentEntity entity = commentAddRecord.toEntity();
         BoardEntity board = boardRepository.findById(boardId).orElseThrow();
 
         entity.setIp(ip);
@@ -93,9 +104,13 @@ public class CommentService {
 
     private CommentAddRecord updateCommentsStep(CommentAddRecord comment) {
         CommentEntity parentComment = commentRepository.findById(comment.parent()).orElseThrow();
+        Optional<CommentEntity> upperComment = commentRepository.findTopByRefIdAndDepthOrderByStepDesc(parentComment.getRefId(), parentComment.getDepth()+1);
 
         Long refId = parentComment.getRefId();
-        Long step = parentComment.getStep() + 1;
+        Long step = 0L;
+        if(upperComment.isPresent()){
+            step = upperComment.get().getStep() + 1;
+        }
         Long depth = parentComment.getDepth() + 1;
 
         commentRepository.updateComments(refId, step);

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     Page<CommentEntity> findAllByBoardIdOrderByRefIdAscStepAsc(Long boardId, Pageable pageable);
@@ -16,4 +18,6 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     int updateComments(Long refId, Long step);
 
     Page<CommentEntity> findAllByUserIdOrderByWriteDateDesc(Long userId, Pageable pageable);
+
+    Optional<CommentEntity> findTopByRefIdAndDepthOrderByStepDesc(Long refId, Long depth);
 }

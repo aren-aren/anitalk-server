@@ -40,4 +40,16 @@ public record CommentAddRecord(
                 .depth(depth())
                 .build();
     }
+
+    public CommentEntity toEntity(UserEntity user) {
+        return CommentEntity.builder()
+                .user(user)
+                .content(content())
+                .nickname(nickname())
+                .password(password())
+                .refId(parent())
+                .step(step())
+                .depth(depth())
+                .build();
+    }
 }
