@@ -35,7 +35,9 @@ public class CommentService {
     private final UserRepository userRepository;
 
     public PageAnd<CommentRecord> getComments(Long boardId, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<CommentEntity> pageCount = commentRepository.findAllByBoardId(boardId, PageRequest.of(0, pagination.getSize()));
+
+        Pageable pageable = PageRequest.of(pageCount.getTotalPages() - pagination.getPage() - 1, pagination.getSize());
         Page<CommentEntity> comments = commentRepository.findAllByBoardIdOrderByRefIdAscStepAsc(boardId, pageable);
         return new PageAnd<>(comments.map(CommentRecord::of));
     }

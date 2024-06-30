@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.comment;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +30,6 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     where c.refId = :refId and c.step > :step and c.depth <= :depth
     """)
     Long getLastStep(Long refId, Long step, Long depth);
+
+    Page<CommentEntity> findAllByBoardId(Long boardId, PageRequest pageRequest);
 }
