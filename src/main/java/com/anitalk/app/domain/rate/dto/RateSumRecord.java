@@ -13,6 +13,7 @@ public record RateSumRecord(
         Integer enjoy
 ) {
     public static RateSumRecord of(RateSumEntity entity){
+        if(entity == null) entity = new RateSumEntity(-1L);
         return new RateSumRecord(
                 entity.getId(),
                 entity.getCount(),

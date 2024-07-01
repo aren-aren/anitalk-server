@@ -12,6 +12,7 @@ public record RateRecord(
         Integer enjoy
 ) {
     public static RateRecord of(RateEntity entity){
+        if(entity == null) return null;
         return new RateRecord(
                 entity.getId(),
                 entity.getQuality(),
