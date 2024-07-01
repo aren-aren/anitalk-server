@@ -1,5 +1,6 @@
-package com.anitalk.app.domain.review;
+package com.anitalk.app.domain.rate;
 
+import com.anitalk.app.domain.review.ReviewEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;

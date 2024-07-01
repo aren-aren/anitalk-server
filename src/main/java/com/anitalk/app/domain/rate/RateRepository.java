@@ -1,4 +1,4 @@
-package com.anitalk.app.domain.review;
+package com.anitalk.app.domain.rate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

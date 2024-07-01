@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.animation;
 
 import com.anitalk.app.domain.board.BoardEntity;
+import com.anitalk.app.domain.rate.RateSumEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
@@ -63,4 +64,8 @@ public class AnimationEntity {
     @OneToMany(mappedBy = "animation", fetch = FetchType.EAGER)
     @BatchSize(size = 100)
     private Set<FavoriteEntity> favorites;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private RateSumEntity rateSum;
 }

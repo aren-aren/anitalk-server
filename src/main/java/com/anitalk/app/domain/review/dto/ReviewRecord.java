@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.review.dto;
 
-import com.anitalk.app.domain.review.RateEntity;
+import com.anitalk.app.domain.rate.RateEntity;
+import com.anitalk.app.domain.rate.dto.RateRecord;
 import com.anitalk.app.domain.review.ReviewEntity;
 
 public record ReviewRecord(

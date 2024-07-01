@@ -1,6 +1,6 @@
-package com.anitalk.app.domain.review.dto;
+package com.anitalk.app.domain.rate.dto;
 
-import com.anitalk.app.domain.review.RateEntity;
+import com.anitalk.app.domain.rate.RateEntity;
 
 public record RateRecord(
         Long reviewId,

@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.review;
 
+import com.anitalk.app.domain.rate.RateEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -24,9 +25,6 @@ public class ReviewEntity {
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
-
-    @Column(name = "sum_rate", nullable = false)
-    private Long sumRate;
 
     @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn

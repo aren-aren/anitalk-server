@@ -34,9 +34,8 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
     @Query("""
         select distinct ani
         from AnimationEntity ani
-            left join ReviewEntity rev on rev.animationId = ani.id
-        group by ani.id
-        order by sum(rev.sumRate) desc, ani.currentDate desc
+            left join ani.rateSum rate
+        order by rate.directing + rate.enjoy + rate.music + rate.originality + rate.quality + rate.story desc, ani.currentDate desc
     """)
     Page<AnimationEntity> findAllRateRanking(Pageable pageable);
 

@@ -1,5 +1,7 @@
 package com.anitalk.app.domain.review;
 
+import com.anitalk.app.domain.rate.RateSumEntity;
+import com.anitalk.app.domain.rate.RateSumRepository;
 import com.anitalk.app.domain.review.dto.ReviewRecord;
 import com.anitalk.app.commons.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository repository;
+    private final RateSumRepository rateSumRepository;
 
     public Page<ReviewRecord> getReviews(Long animationId, Pagination pagination) {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
@@ -26,8 +29,11 @@ public class ReviewService {
     public ReviewRecord addReview(ReviewRecord review) {
         ReviewEntity entity = review.toEntity();
         entity.getRate().setReview(entity);
+        entity = repository.save(entity);
 
-        repository.save(entity);
+        RateSumEntity rateSumEntity = rateSumRepository.findById(review.animationId()).orElse(new RateSumEntity(review.animationId()));
+        rateSumEntity.plusRate(entity.getRate());
+        rateSumRepository.save(rateSumEntity);
 
         return ReviewRecord.of(entity);
     }

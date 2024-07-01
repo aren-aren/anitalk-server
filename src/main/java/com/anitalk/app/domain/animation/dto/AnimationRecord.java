@@ -2,6 +2,7 @@ package com.anitalk.app.domain.animation.dto;
 
 import com.anitalk.app.domain.animation.AnimationEntity;
 import com.anitalk.app.domain.animation.FavoriteEntity;
+import com.anitalk.app.domain.rate.dto.RateSumRecord;
 
 public record AnimationRecord(
         Long id,
@@ -18,7 +19,8 @@ public record AnimationRecord(
         String startDate,
         String currentDate,
         String thumbnailUrl,
-        FavoriteRecord favorite
+        FavoriteRecord favorite,
+        RateSumRecord rate
 ) {
 
     public static AnimationRecord of(AnimationEntity entity, String url, Long userId){
@@ -52,7 +54,8 @@ public record AnimationRecord(
                 entity.getStartDate(),
                 entity.getCurrentDate(),
                 url,
-                favoriteRecord
+                favoriteRecord,
+                RateSumRecord.of(entity.getRateSum())
         );
     }
 }
