@@ -7,6 +7,7 @@ import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.attach.AttachRepository;
+import com.anitalk.app.domain.search.RealtimeSearchManager;
 import com.anitalk.app.domain.user.UserEntity;
 import com.anitalk.app.domain.user.UserRepository;
 import com.anitalk.app.utils.DateManager;
@@ -31,6 +32,7 @@ public class AnimationService {
     private final AttachRepository attachRepository;
     private final AttachManager attachManager;
     private final UserRepository userRepository;
+    private final RealtimeSearchManager realtimeSearchManager;
 
     @Value("${aws.url}")
     private String url;
@@ -51,6 +53,7 @@ public class AnimationService {
         if(searchRecord.search() == null){
             return animationRepository.findAll(pageable);
         } else {
+            realtimeSearchManager.saveSearch(searchRecord.search());
             return animationRepository.findAllByNameContains(searchRecord.search(), pageable);
         }
     }
