@@ -18,13 +18,13 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<PageAnd<ReviewRecord>> getReviews(@PathVariable Long animationId, Pagination pagination){
+    public ResponseEntity<PageAnd<ReviewRecord>> getReviews(@PathVariable Long animationId, Pagination pagination) {
         PageAnd<ReviewRecord> boardRecords = new PageAnd<>(reviewService.getReviews(animationId, pagination));
         return ResponseEntity.ok(boardRecords);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewRecord> getReviewById(@PathVariable Long id){
+    public ResponseEntity<ReviewRecord> getReviewById(@PathVariable Long id) {
         ReviewRecord boardRecord = reviewService.getReviewById(id);
         return ResponseEntity.ok(boardRecord);
     }
@@ -33,8 +33,8 @@ public class ReviewController {
     public ResponseEntity<ReviewRecord> addReview(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
-            @RequestBody ReviewRecord review){
-        review = new ReviewRecord(review.id(), animationId, user.id(), review.content(), review.rate());
+            @RequestBody ReviewRecord review) {
+        review = new ReviewRecord(review.id(), animationId, user.id(), null, review.content(), review.rate());
         ReviewRecord boardRecord = reviewService.addReview(review);
         return ResponseEntity.ok(boardRecord);
     }
@@ -43,8 +43,8 @@ public class ReviewController {
     public ResponseEntity<ReviewRecord> putReview(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long id,
-            @RequestBody ReviewRecord review){
-        review = new ReviewRecord(id, null, user.id(), review.content(), review.rate());
+            @RequestBody ReviewRecord review) {
+        review = new ReviewRecord(id, null, user.id(), null, review.content(), review.rate());
         ReviewRecord putBoard = reviewService.putReview(review);
         return ResponseEntity.ok(putBoard);
     }

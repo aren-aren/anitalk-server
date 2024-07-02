@@ -8,6 +8,7 @@ public record ReviewRecord(
         Long id,
         Long animationId,
         Long userId,
+        String nickname,
         String content,
         RateRecord rate
 ) {
@@ -15,7 +16,8 @@ public record ReviewRecord(
         return new ReviewRecord(
                 entity.getId(),
                 entity.getAnimationId(),
-                entity.getUserId(),
+                entity.getUser().getId(),
+                entity.getUser().getNickname(),
                 entity.getContent(),
                 RateRecord.of(entity.getRate())
         );

@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.review;
 
 import com.anitalk.app.domain.rate.RateEntity;
+import com.anitalk.app.domain.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +20,8 @@ public class ReviewEntity {
     @Column(name = "animation_id", nullable = false)
     private Long animationId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    private UserEntity user;
 
     @Lob
     @Column(name = "content", nullable = false)
@@ -34,7 +35,7 @@ public class ReviewEntity {
     public ReviewEntity(Long id, Long animationId, Long userId, String content, RateEntity rate) {
         this.id = id;
         this.animationId = animationId;
-        this.userId = userId;
+        this.user = UserEntity.builder().id(userId).build();
         this.content = content;
         this.rate = rate;
     }
