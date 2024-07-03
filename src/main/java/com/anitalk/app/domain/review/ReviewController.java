@@ -1,6 +1,7 @@
 package com.anitalk.app.domain.review;
 
 import com.anitalk.app.commons.PageAnd;
+import com.anitalk.app.commons.StringResult;
 import com.anitalk.app.domain.review.dto.ReviewRecord;
 import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import com.anitalk.app.commons.Pagination;
@@ -47,5 +48,15 @@ public class ReviewController {
         review = new ReviewRecord(id, null, user.id(), null, review.content(), review.rate());
         ReviewRecord putBoard = reviewService.putReview(review);
         return ResponseEntity.ok(putBoard);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StringResult> deleteReview(
+            @AuthenticationPrincipal AuthenticateUserRecord user,
+            @PathVariable Long id ) throws Exception {
+        if(user == null) throw new Exception("로그인이 필요합니다.");
+
+        reviewService.deleteReview(id, user.id());
+        return ResponseEntity.ok(new StringResult("success"));
     }
 }

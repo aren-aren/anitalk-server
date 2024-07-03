@@ -44,4 +44,9 @@ public class ReviewService {
         entity = repository.save(entity);
         return ReviewRecord.of(entity);
     }
+
+    public void deleteReview(Long reviewId, Long userId) {
+        ReviewEntity review = repository.findByIdAndUserId(reviewId, userId).orElseThrow();
+        repository.delete(review);
+    }
 }
