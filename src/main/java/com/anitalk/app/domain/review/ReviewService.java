@@ -28,9 +28,9 @@ public class ReviewService {
     }
 
     public ReviewRecord addReview(ReviewRecord review) throws Exception {
-        if(repository.findByAnimationIdAndUserId(review.animationId(), review.userId()).isPresent()){
-            throw new Exception("애니메이션에 리뷰는 한번씩만 작성 가능합니다");
-        }
+//        if(repository.findByAnimationIdAndUserId(review.animationId(), review.userId()).isPresent()){
+//            throw new Exception("애니메이션에 리뷰는 한번씩만 작성 가능합니다");
+//        }
 
         ReviewEntity entity = review.toEntity();
         entity.getRate().setReview(entity);
