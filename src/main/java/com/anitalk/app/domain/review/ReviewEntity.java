@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Data
 @Entity
 @Table(name = "review")
 @NoArgsConstructor
+@SQLRestriction("is_deleted=false")
 @SQLDelete(sql="update review set is_deleted = true where id = ?")
 public class ReviewEntity {
     @Id

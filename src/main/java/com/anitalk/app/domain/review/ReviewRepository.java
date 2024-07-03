@@ -12,4 +12,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     Page<ReviewEntity> findAllByAnimationId(Long animationId, Pageable pageable);
 
     Optional<ReviewEntity> findByIdAndUserId(Long id, Long userId);
+
+    Optional<ReviewEntity> findByAnimationIdAndUserId(Long aLong, Long aLong1);
 }

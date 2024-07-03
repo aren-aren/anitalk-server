@@ -34,7 +34,9 @@ public class ReviewController {
     public ResponseEntity<ReviewRecord> addReview(
             @AuthenticationPrincipal AuthenticateUserRecord user,
             @PathVariable Long animationId,
-            @RequestBody ReviewRecord review) {
+            @RequestBody ReviewRecord review) throws Exception {
+        if(user == null) throw new Exception("로그인이 필요합니다.");
+
         review = new ReviewRecord(review.id(), animationId, user.id(), null, review.content(), review.rate());
         ReviewRecord boardRecord = reviewService.addReview(review);
         return ResponseEntity.ok(boardRecord);
