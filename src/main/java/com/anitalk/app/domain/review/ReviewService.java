@@ -4,6 +4,7 @@ import com.anitalk.app.domain.rate.RateSumEntity;
 import com.anitalk.app.domain.rate.RateSumRepository;
 import com.anitalk.app.domain.review.dto.ReviewRecord;
 import com.anitalk.app.commons.Pagination;
+import com.anitalk.app.domain.user.dto.AuthenticateUserRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,5 +53,11 @@ public class ReviewService {
     public void deleteReview(Long reviewId, Long userId) {
         ReviewEntity review = repository.findByIdAndUserId(reviewId, userId).orElseThrow();
         repository.delete(review);
+    }
+
+    public ReviewRecord getReviewByUserId(Long animationId, AuthenticateUserRecord user) {
+        ReviewEntity review = repository.findByAnimationIdAndUserId(animationId, user.id()).orElseThrow();
+
+        return ReviewRecord.of(review);
     }
 }

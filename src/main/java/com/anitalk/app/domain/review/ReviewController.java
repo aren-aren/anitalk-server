@@ -20,14 +20,23 @@ public class ReviewController {
 
     @GetMapping
     public ResponseEntity<PageAnd<ReviewRecord>> getReviews(@PathVariable Long animationId, Pagination pagination) {
-        PageAnd<ReviewRecord> boardRecords = new PageAnd<>(reviewService.getReviews(animationId, pagination));
-        return ResponseEntity.ok(boardRecords);
+        PageAnd<ReviewRecord> reviewRecord = new PageAnd<>(reviewService.getReviews(animationId, pagination));
+        return ResponseEntity.ok(reviewRecord);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ReviewRecord> getReviewById(@PathVariable Long id) {
-        ReviewRecord boardRecord = reviewService.getReviewById(id);
-        return ResponseEntity.ok(boardRecord);
+        ReviewRecord reviewRecord = reviewService.getReviewById(id);
+        return ResponseEntity.ok(reviewRecord);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<ReviewRecord> getReviewByUserId(
+            @PathVariable Long animationId,
+            @AuthenticationPrincipal AuthenticateUserRecord user ) {
+        ReviewRecord reviewRecord = reviewService.getReviewByUserId(animationId, user);
+
+        return ResponseEntity.ok(reviewRecord);
     }
 
     @PostMapping
@@ -38,8 +47,8 @@ public class ReviewController {
         if(user == null) throw new Exception("로그인이 필요합니다.");
 
         review = new ReviewRecord(review.id(), animationId, user.id(), null, review.content(), review.rate());
-        ReviewRecord boardRecord = reviewService.addReview(review);
-        return ResponseEntity.ok(boardRecord);
+        ReviewRecord reviewRecord = reviewService.addReview(review);
+        return ResponseEntity.ok(reviewRecord);
     }
 
     @PutMapping("/{id}")
@@ -48,8 +57,8 @@ public class ReviewController {
             @PathVariable Long id,
             @RequestBody ReviewRecord review) {
         review = new ReviewRecord(id, null, user.id(), null, review.content(), review.rate());
-        ReviewRecord putBoard = reviewService.putReview(review);
-        return ResponseEntity.ok(putBoard);
+        ReviewRecord putReview = reviewService.putReview(review);
+        return ResponseEntity.ok(putReview);
     }
 
     @DeleteMapping("/{id}")
