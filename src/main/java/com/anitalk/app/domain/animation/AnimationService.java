@@ -7,6 +7,8 @@ import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import com.anitalk.app.domain.attach.AttachEntity;
 import com.anitalk.app.domain.attach.AttachManager;
 import com.anitalk.app.domain.attach.AttachRepository;
+import com.anitalk.app.domain.review.ReviewEntity;
+import com.anitalk.app.domain.review.ReviewRepository;
 import com.anitalk.app.domain.search.RealtimeSearchManager;
 import com.anitalk.app.domain.user.UserEntity;
 import com.anitalk.app.domain.user.UserRepository;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +36,7 @@ public class AnimationService {
     private final AttachManager attachManager;
     private final UserRepository userRepository;
     private final RealtimeSearchManager realtimeSearchManager;
+    private final ReviewRepository reviewRepository;
 
     @Value("${aws.url}")
     private String url;
@@ -77,7 +81,10 @@ public class AnimationService {
         AnimationEntity animationEntity = animationRepository.findById(id).orElseThrow();
         AttachEntity attachEntity = attachRepository.findByCategoryAndParentId(CATEGORY, animationEntity.getId());
 
-        return AnimationRecord.of(animationEntity, url + attachEntity.getName(), userId);
+        if(userId == null) return AnimationRecord.of(animationEntity, url + attachEntity.getName(), null);
+
+        Optional<ReviewEntity> review = reviewRepository.findByAnimationIdAndUserId(id, userId);
+        return AnimationRecord.of(animationEntity, url + attachEntity.getName(), userId, review.isPresent());
     }
 
 

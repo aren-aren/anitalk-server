@@ -18,12 +18,17 @@ public record AnimationRecord(
         Integer episode,
         String startDate,
         String currentDate,
+        boolean isReview,
         String thumbnailUrl,
         FavoriteRecord favorite,
         RateSumRecord rate
 ) {
 
     public static AnimationRecord of(AnimationEntity entity, String url, Long userId){
+        return AnimationRecord.of(entity, url, userId, false);
+    }
+
+    public static AnimationRecord of(AnimationEntity entity, String url, Long userId, boolean isReview){
         boolean isFavorite = false;
         FavoriteRecord favoriteRecord = null;
 
@@ -53,6 +58,7 @@ public record AnimationRecord(
                 entity.getEpisode(),
                 entity.getStartDate(),
                 entity.getCurrentDate(),
+                isReview,
                 url,
                 favoriteRecord,
                 RateSumRecord.of(entity.getRateSum())
