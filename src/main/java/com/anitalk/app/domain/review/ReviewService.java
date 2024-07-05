@@ -1,5 +1,6 @@
 package com.anitalk.app.domain.review;
 
+import com.anitalk.app.commons.PageAnd;
 import com.anitalk.app.domain.rate.RateSumEntity;
 import com.anitalk.app.domain.rate.RateSumRepository;
 import com.anitalk.app.domain.review.dto.ReviewRecord;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,5 +62,12 @@ public class ReviewService {
         ReviewEntity review = repository.findByAnimationIdAndUserId(animationId, user.id()).orElseThrow();
 
         return ReviewRecord.of(review);
+    }
+
+    public PageAnd<ReviewRecord> getReviewsByUserId(Long userId, Pagination pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Page<ReviewEntity> reviews = repository.findAllByUserId(userId, pageable);
+
+        return new PageAnd<>(reviews.map(ReviewRecord::of));
     }
 }
