@@ -61,4 +61,16 @@ public class RateSumEntity {
         this.originality += rate.getOriginality();
         this.enjoy += rate.getEnjoy();
     }
+
+    public void minusRate(RateEntity rate) {
+        if(count == 0) return;
+
+        this.count -= 1;
+        this.quality -= rate.getQuality();
+        this.story -= rate.getStory();
+        this.directing -= rate.getDirecting();
+        this.music -= rate.getMusic();
+        this.originality -= rate.getOriginality();
+        this.enjoy -= rate.getEnjoy();
+    }
 }

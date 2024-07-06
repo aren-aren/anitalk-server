@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -53,8 +54,13 @@ public class ReviewService {
         return ReviewRecord.of(entity);
     }
 
+    @Transactional
     public void deleteReview(Long reviewId, Long userId) {
         ReviewEntity review = repository.findByIdAndUserId(reviewId, userId).orElseThrow();
+        RateSumEntity rateSumEntity = rateSumRepository.findById(review.getAnimationId()).orElse(new RateSumEntity(review.getAnimationId()));
+        rateSumEntity.minusRate(review.getRate());
+        rateSumRepository.save(rateSumEntity);
+
         repository.delete(review);
     }
 
