@@ -34,7 +34,7 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
     @Query("""
         select distinct ani
         from AnimationEntity ani
-            left join ani.rateSum rate
+            left join fetch ani.rateSum rate
         order by rate.directing + rate.enjoy + rate.music + rate.originality + rate.quality + rate.story desc, ani.currentDate desc
     """)
     Page<AnimationEntity> findAllRateRanking(Pageable pageable);
@@ -44,7 +44,7 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
     @Query("""
         select distinct ani
         from AnimationEntity ani
-            left join ani.rateSum rate
+            left join fetch ani.rateSum rate
     """)
     Page<AnimationEntity> findAllFetchJoin(Pageable pageable);
 }
