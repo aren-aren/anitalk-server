@@ -1,10 +1,8 @@
 package com.anitalk.app.domain.animation;
 
 
-import com.anitalk.app.domain.animation.dto.AnimationSearchRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,7 +14,8 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
     @Query("""
         select distinct ani
         from AnimationEntity ani
-            join fetch FavoriteEntity fav on ani.id = fav.animation.id
+            join fetch ani.favorites fav
+            join fetch ani.rateSum rate
         where fav.user.id = :userId
         order by ani.currentDate desc
     """)
@@ -25,7 +24,8 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
     @Query("""
         select distinct ani
         from AnimationEntity ani
-            left join fetch BoardEntity bor on bor.animation.id = ani.id and :startDate <= bor.writeDate
+            join fetch ani.rateSum rate
+            left join BoardEntity bor on bor.animation.id = ani.id and :startDate <= bor.writeDate
         group by ani.id
         order by count(bor.id) desc, ani.currentDate desc
     """)
@@ -40,4 +40,11 @@ public interface AnimationRepository extends JpaRepository<AnimationEntity, Long
     Page<AnimationEntity> findAllRateRanking(Pageable pageable);
 
     Page<AnimationEntity> findAllByNameContains(String search, Pageable pageable);
+
+    @Query("""
+        select distinct ani
+        from AnimationEntity ani
+            left join ani.rateSum rate
+    """)
+    Page<AnimationEntity> findAllFetchJoin(Pageable pageable);
 }

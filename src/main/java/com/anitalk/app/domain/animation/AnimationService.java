@@ -55,7 +55,7 @@ public class AnimationService {
 
     private Page<AnimationEntity> findAnimationBySearchRecord(AnimationSearchRecord searchRecord, Pageable pageable){
         if(searchRecord.search() == null){
-            return animationRepository.findAll(pageable);
+            return animationRepository.findAllFetchJoin(pageable);
         } else {
             realtimeSearchManager.saveSearch(searchRecord.search());
             return animationRepository.findAllByNameContains(searchRecord.search(), pageable);
